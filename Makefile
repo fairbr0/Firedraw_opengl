@@ -12,7 +12,7 @@ CFLAGS := -g
 OBJS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 INC := -I include
 
-TARGET = $(BINDIR)/draw
+TARGET = $(BINDIR)/main
 
 $(TARGET): $(OBJS)
 	@echo " Linking..."

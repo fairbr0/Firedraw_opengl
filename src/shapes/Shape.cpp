@@ -9,6 +9,16 @@ Shape::Shape()
     rotation = 0.0;
 }
 
+Shape::Shape(Point p, int w, int h, int objRef, Element e)
+{
+    center = p;
+    width = w;
+    height = h;
+    rotation = 0.0;
+    this->objRef = objRef;
+    elem = e;
+}
+
 Shape::Shape(Point p, int w, int h, int objRef)
 {
     center = p;
@@ -16,6 +26,7 @@ Shape::Shape(Point p, int w, int h, int objRef)
     height = h;
     rotation = 0.0;
     this->objRef = objRef;
+    elem = Element();
 }
 
 Point Shape::getCenter()
@@ -66,18 +77,26 @@ int Shape::getObjRef()
 
 void Shape::drawShape()
 {
-    vector<float> colors = this->lineColor.getColors();
+    vector<float> colors = this->elem.getLineColor().getColors();
     glColor4f(colors[0], colors[1], colors[2], colors[3]);
-    glLineWidth(this->lineWeight);
+    glLineWidth(this->elem.getLineWeight());
     glPushMatrix();
         glTranslatef(center.getPoint()[0], 1000-center.getPoint()[1], 0.0f);
         glScalef((GLfloat) width, (GLfloat) height, 1.0f);
-        std::cout << "objRef : " << this->objRef << "\n";
         glLoadName(this->objRef);
-        glBegin(GL_POLYGON);
+        glBegin(GL_LINE_LOOP);
             for (std::vector<int>::size_type i = 0; i < geometry.size(); i++) {
                 glVertex2fv(geometry[i].getPoint());
                 }
         glEnd();
+        if (elem.getIsFilled()) {
+            vector<float> colors = this->elem.getFillColor().getColors();
+            glColor4f(colors[0], colors[1], colors[2], colors[3]);
+            glBegin(GL_POLYGON);
+                for (std::vector<int>::size_type i = 0; i < geometry.size(); i++) {
+                    glVertex2fv(geometry[i].getPoint());
+                    }
+            glEnd();
+        }
     glPopMatrix();
 }

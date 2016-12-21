@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Shape.h"
+#include "Element.h"
 #include <cmath>
 #define PI 3.14159265
 
 
 class Circle : public Shape {
 public:
-    Circle(Point p, int width, int height, int objRef) : Shape(p, width, height, objRef){
+    Circle(Point p, int width, int height, int objRef, Element e) : Shape(p, width, height, objRef, e){
         int theta = 0;  // angle that will be increased each loop
         int step = 5;  // amount to add to theta each time (degrees)
 

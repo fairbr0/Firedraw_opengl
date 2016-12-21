@@ -6,6 +6,7 @@ class Element
 {
 public:
     Element();
+    Element(bool isFilled, float lineWeight, Color lineColor, Color fillColor);
     void setIsFilled(bool b);
     void setLineColor(Color c);
     void setFillColor(Color c);
@@ -14,7 +15,6 @@ public:
     Color getLineColor();
     Color getFillColor();
     bool getIsFilled();
-    
 protected:
     Color lineColor;
     Color fillColor;

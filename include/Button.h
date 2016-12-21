@@ -1,20 +1,26 @@
 #pragma once
+#include <vector>
 #include <string>
+#include "Point.h"
+#include "Callbacks.h"
 
-class Button : {
+typedef void (*ButtonCallBack)();
+
+class Button
+{
 public:
     Button();
-    Button(int x, int y, int w, int h, string label, ButtonCallback callbackFunction);
-    void setState(bool state);
-    void setHighlighted(bool highlighted);
-    bool getState();
-    bool getHighlighted();
-    string getLabel();
-    ButtonCallback getCallbackFunction();
+    Button(float x, float y, float w, float h, std::string label, void (Callbacks::*callBack_func)(), Callbacks* callbacks, int objRef);
+    float x, y, w, h;
+    std::string label;
+    bool isClicked, isHovered;
+    int objRef;
+    std::vector<Point> geometry;
+    void (Callbacks::*callBack_func)();
+    void drawButton();
+    void makeGeometry();
+    void whoami();
+    void callBack();
+    Callbacks* callbacks;
 private:
-    const int x, y, w, h;
-    const string label;
-    bool state;
-    bool highlighted;
-    const ButtonCallback callbackFunction;
-}
+};

@@ -7,6 +7,7 @@
 class Shape : public Element {
 public:
     Shape();
+    Shape(Point p, int w, int h, int objRef, Element e);
     Shape(Point p, int w, int h, int objRef);
     Point getCenter();
     double getRotation();
@@ -14,10 +15,11 @@ public:
     int getHeight();
     int getObjRef();
     void setRotation(double r);
-    void move(float x, float y);
     void setCenter(Point p);
     void setSize(int width, int height);
+    void move(float x, float y);
     void drawShape();
+    Element elem;
 private:
     Point center;
     int width;

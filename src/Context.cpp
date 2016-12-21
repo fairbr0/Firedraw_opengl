@@ -55,11 +55,6 @@ void Context::setRenderMode(int renderMode)
     this->appRenderMode = renderMode;
 }
 
-void Context::setTemporyDrawShape(Shape s)
-{
-    this->drawTemporyShape = s;
-}
-
 void Context::setInitialDrawPoint(Point p)
 {
     this->drawInitialPoint = p;
@@ -76,6 +71,9 @@ void Context::setObjectId(int id){
 
 void Context::setSelectedObject(int id)
 {
+    if (appClickedObject) {
+        appPrevClickedObject = appClickedObject;
+    }
     appClickedObject = 0;
     std::cout << "id: " << id << "\n";
     for (int i = 0; i < appShapes.size(); i++) {
@@ -83,6 +81,10 @@ void Context::setSelectedObject(int id)
             appClickedObject = &appShapes[i];
         }
     }
+}
+
+void Context::setPrevSelectedObject(Shape *s){
+    this->appPrevClickedObject = s;
 }
 
 void Context::setFillColor(Color c)
@@ -182,9 +184,9 @@ Shape* Context::getSelectedObject()
     return appClickedObject;
 }
 
-Shape* Context::getTemporyDrawShape()
+Shape* Context::getPrevSelectedObject()
 {
-    return &drawTemporyShape;
+    return appPrevClickedObject;
 }
 
 Point* Context::getInitialDrawPoint()
@@ -197,20 +199,70 @@ std::vector<Shape> * Context::getShapes()
     return &appShapes;
 }
 
+std::vector<Shape> * Context::getTempShapes()
+{
+    return &tempShapes;
+}
+
 /************ METHODS **********/
 
 Shape Context::newShape(Point mid, int x, int y, int ref)
 {
     Shape s;
+    Element e = Element(appFillShape, appLineWeight, appLineColor, appFillColor);
     switch (appShapeToDraw) {
-        case SQUARE: s = Square(mid, x, y, ref); break;
-        case TRIANGLE: s = Triangle(mid, x, y, ref); break;
-        case CIRCLE: s = Circle(mid, x, y, ref); break;
+        case SQUARE: s = Square(mid, x, y, ref, e); break;
+        case TRIANGLE: s = Triangle(mid, x, y, ref, e); break;
+        case CIRCLE: s = Circle(mid, x, y, ref, e); break;
     }
     return s;
+}
+
+void Context::createEditBox()
+{
+    Shape o = *this->appClickedObject;
+    Shape s = Square(o.getCenter(), o.getWidth(), o.getHeight(), -1, o.elem);
+    s.elem.setIsFilled(false);
+    s.elem.setLineWeight(1.0f);
+    s.elem.setLineColor(Color(0.4, 0.4, 0.4, 0.7));
+    this->tempShapes.push_back(s);
+
+    Element e = Element(true, 1.0f, Color(1.0, 0.0, 0.0, 0.7), Color(1.0, 0.0, 0.0, 0.7));
+
+    Point p = o.getCenter();
+    p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
+    Shape c0 = Square(p, 5, 5, -2, e);
+    this->tempShapes.push_back(c0);
+
+    p = o.getCenter();
+    p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
+    Shape c1 = Square(p, 5, 5, -3, e);
+    this->tempShapes.push_back(c1);
+
+    p = o.getCenter();
+    p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
+    Shape c2 = Square(p, 5, 5, -4, e);
+    this->tempShapes.push_back(c2);
+
+    p = o.getCenter();
+    p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
+    Shape c3 = Square(p, 5, 5, -5, e);
+    this->tempShapes.push_back(c3);
+
+    e.setFillColor(Color(0.0, 1.0, 0.0));
+    e.setLineColor(Color(0.0, 1.0, 0.0));
+    p = o.getCenter();
+    p.move(p.getPoint()[0], p.getPoint()[1] + o.getHeight()/2);
+    Shape c4 = Square(p, 5, 5, -6, e);
+    this->tempShapes.push_back(c4);
 }
 
 void Context::resetAppShapes()
 {
     appShapes = std::vector<Shape>();
+}
+
+void Context::resetTempShapes()
+{
+    tempShapes = std::vector<Shape>();
 }

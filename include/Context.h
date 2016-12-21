@@ -1,3 +1,4 @@
+#pragma once
 #include "Shape.h"
 #include <Vector>
 #include <GLUT/glut.h>
@@ -27,14 +28,15 @@ public:
     int appToolMode;
     int appNextObjectId;
     unsigned int PickBuffer[PICK_BUFFER_SIZE];
-    Shape* appClickedObject;
-    Shape drawTemporyShape;
+    Shape* appClickedObject = NULL;
+    std::vector<Shape> tempShapes;
     std::vector<Shape> appShapes;
     Point drawInitialPoint;
     Color appLineColor;
     Color appFillColor;
     float appLineWeight;
     bool appFillShape;
+    Shape* appPrevClickedObject = NULL;
 
     void setSelectedObject(int id);
     void setShapeToDraw(int id);
@@ -44,7 +46,6 @@ public:
     void setPrevMouseX(float x);
     void setPrevMouseY(float y);
     void setRenderMode(int renderMode);
-    void setTemporyDrawShape(Shape s);
     void setInitialDrawPoint(Point p);
     void isClicked(bool clicked);
     void setObjectId(int id);
@@ -52,6 +53,7 @@ public:
     void setFillColor(Color c);
     void setLineWeight(float w);
     void setIsFilled(bool b);
+    void setPrevSelectedObject(Shape *);
 
     unsigned int* getPickBuffer();
     bool isClicked();
@@ -68,11 +70,14 @@ public:
     Color* getLineColor();
     Color* getFillColor();
     Shape* getSelectedObject();
-    Shape* getTemporyDrawShape();
+    Shape* getPrevSelectedObject();
     Point* getInitialDrawPoint();
     std::vector<Shape> * getShapes();
+    std::vector<Shape> * getTempShapes();
 
     Shape newShape(Point mid, int x, int y, int ref);
     void resetAppShapes();
+    void resetTempShapes();
+    void createEditBox();
 private:
 };

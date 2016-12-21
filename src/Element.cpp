@@ -8,6 +8,14 @@ Element::Element()
     isFilled = true;
 }
 
+Element::Element(bool isFilled, float lineWeight, Color lineColor, Color fillColor)
+{
+    this->isFilled = isFilled;
+    this->lineColor = lineColor;
+    this->fillColor = fillColor;
+    this->lineWeight = lineWeight;
+}
+
 void Element::setIsFilled(bool b)
 {
     this->isFilled = b;

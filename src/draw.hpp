@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include "Context.h"
+#include <stdlib.h>
 
 #define MOVE 1
 #define DRAW 0
@@ -14,9 +15,9 @@ using namespace std;
 
 Context c;
 
-
 void display()
 {
+    cout << "begin display\n";
     int viewport[4];
     GLint dx = glutGet(GLUT_WINDOW_WIDTH);
     GLint dy = glutGet(GLUT_WINDOW_HEIGHT);
@@ -41,11 +42,13 @@ void display()
     for (std::vector<int>::size_type i = 0; i < c.getShapes()->size(); i++) {
         c.appShapes[i].drawShape();
     }
-    c.getTemporyDrawShape()->drawShape();
-    cout << "current render mode :" << c.getRenderMode() << "\n";
-    cout << "expected render mode :" << GL_RENDER << "\n";
+    cout << "drawn geom" << "\n";
+    if (c.isClicked()) {
+        for (std::vector<int>::size_type i = 0; i < c.getTempShapes()->size(); i++) {
+            c.tempShapes[i].drawShape();
+        }
+    }
     if (c.getRenderMode() == GL_RENDER) {
-        cout << "renderMode: " << c.getRenderMode() << "\n";
         glutSwapBuffers();
     }
 }
@@ -60,8 +63,8 @@ void mouse_motion(int x, int y)
                 Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x, y));
                 int dx = (c.getInitialDrawPoint()->getPoint()[0] - x);
                 int dy = (c.getInitialDrawPoint()->getPoint()[1] - y);
-
-                c.setTemporyDrawShape(c.newShape(mid, dx, dy, -1));
+                c.resetTempShapes();
+                c.getTempShapes()->push_back(c.newShape(mid, dx, dy, -1));
                 glutPostRedisplay();
             }
             break;
@@ -70,6 +73,9 @@ void mouse_motion(int x, int y)
                 float dx = c.getMouseX() - c.getPrevMouseX();
                 float dy = c.getMouseY() - c.getPrevMouseY();
                 c.getSelectedObject()->move(dx, dy);
+                for (int i = 0; i < c.getTempShapes()->size(); i++) {
+                    c.tempShapes[i].move(dx, dy);
+                }
                 glutPostRedisplay();
             }
             break;
@@ -92,6 +98,11 @@ void mouse_click(int button, int state, int x, int y)
                     c.isClicked(true);
                     c.setInitialDrawPoint(Point(x, y));
 
+                    //***********remove later***********/
+                    float color = (rand() % 255)/255.0f;
+                    c.setLineColor(Color(color, color, color));
+                    /***********************************/
+
                 } else if (state==GLUT_UP) {
                     c.isClicked(false);
                     Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x, y));
@@ -102,11 +113,11 @@ void mouse_click(int button, int state, int x, int y)
                         dx = 10;
                         dy = 10;
                     }
-                    ////
+
                     int id = c.getObjectId();
                     c.getShapes()->push_back(c.newShape(mid, dx, dy, id));
                     c.setObjectId(id + 1);
-                    c.setTemporyDrawShape(Shape());
+                    c.resetTempShapes();
                     glutPostRedisplay();
                 }
             }
@@ -133,14 +144,29 @@ void mouse_click(int button, int state, int x, int y)
                         cout << "item : " << item << "\n";
                         if (item > maxId) maxId = item;
                     }
-
                     c.setSelectedObject(maxId);
+                    if (!c.getPrevSelectedObject()) {
+                        cout << "prev was null\n";
+                        c.resetTempShapes();
+                        c.createEditBox();
+                    } else if ( c.getSelectedObject()->getObjRef() != c.getPrevSelectedObject()->getObjRef()) {
+                        cout << "non equal obj\n";
+                        c.resetTempShapes();
+                        c.createEditBox();
+                    } else {
+
+                    }
 
                 }
 
                 if (hits == 0) {
                     c.isClicked(false);
+                    cout << "nothing clicked";
+                    c.setSelectedObject(NULL);
+                    c.setPrevSelectedObject(NULL);
+                    c.resetTempShapes();
                 }
+                glutPostRedisplay();
 
             } else if (state == GLUT_UP) {
                 c.isClicked(false);
@@ -156,7 +182,11 @@ void keyboard(unsigned char key, int x, int y)
         case 's':
             if (c.getToolMode() == DRAW ) {
                 c.setShapeToDraw((c.getShapeToDraw()+ 1) % 3);
-            } else c.setToolMode(DRAW);
+            } else {
+                c.setToolMode(DRAW);
+                c.resetTempShapes();
+                glutPostRedisplay();
+            }
             break;
         case 'c': c.resetAppShapes(); glutPostRedisplay(); break;
         case 'v': c.setToolMode(MOVE); break;
@@ -180,7 +210,7 @@ void toolinit()
     glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
-int main(int argc, char* argv[])
+int run(int argc, char* argv[])
 {
     GLint w1, w2;
     glutInit(&argc, argv);
@@ -195,9 +225,10 @@ int main(int argc, char* argv[])
     glutMouseFunc(mouse_click);
     glutMotionFunc(mouse_motion);
 
+    cout << "creating Context\n";
     c = Context();
     glSelectBuffer(PICK_BUFFER_SIZE, c.getPickBuffer());
-
+    cout << "context created\n";
     drawinit();
 
     /*glutInitWindowSize(100, 500);
