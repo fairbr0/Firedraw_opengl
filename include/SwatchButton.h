@@ -16,6 +16,6 @@ public:
     Color getColor();
     void (Callbacks::*swatchCallBack_func)(Color c);
     void swatchCallBack();
-private:
+    private:
     Color color;
 };

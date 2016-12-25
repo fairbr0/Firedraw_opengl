@@ -27,9 +27,10 @@ Button::Button(float x, float y, float w, float h, string label, void (Callbacks
     this->makeGeometry();
     }
 
-void Button::whoami()
+string Button::whoami()
 {
         cout << "i am " << label << "\n";
+        return label;
 }
 
 void Button::drawButton()
@@ -41,6 +42,11 @@ void Button::drawButton()
             glScalef(this->w, this->h, 0.0f);
             glLoadName(this->objRef);
             glBegin(GL_POLYGON);
+            if (isClicked) {
+                glColor3f(0.65, 0.65, 0.65);
+            } else {
+                glColor3f(0.7, 0.7, 0.7);
+            }
             for (int i = 0; i < 4; i++) {
                 float vec[2];
                 vec[0] = geometry[i].getPoint()[0];
@@ -75,7 +81,11 @@ void Button::drawButton()
                 width += glutStrokeWidth(GLUT_STROKE_ROMAN, this->label[i]);
 
             glTranslatef(-width / 2, 0.0, 0.0f);
-            glColor3f(0.0f, 1.0f, 1.0f);
+            if (isClicked) {
+                glTranslatef(10, -3.0, 0.0f);
+            }
+            glColor3f(0.0f, 0.0f, 0.0f);
+            glLineWidth(1.0f);
             for (int i = 0; i < this->label.size(); i++) {
                 glutStrokeCharacter(GLUT_STROKE_ROMAN, this->label[i]);
             }

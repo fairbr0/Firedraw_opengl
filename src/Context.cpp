@@ -4,6 +4,7 @@
 #include "Circle.h"
 #include <vector>
 #include <iostream>
+#include <string>
 
 
 Context::Context()
@@ -19,6 +20,15 @@ Context::Context()
 }
 
 /************ SETTERS **********/
+
+void Context::setColor(Color c)
+{
+    if (colorToChange) {
+        setLineColor(c);
+    } else {
+        setFillColor(c);
+    }
+}
 
 void Context::setShapeToDraw(int id)
 {
@@ -90,21 +100,42 @@ void Context::setPrevSelectedObject(Shape *s){
 void Context::setFillColor(Color c)
 {
     this->appFillColor = c;
+    if (appClickedObject) {
+        appClickedObject->elem.setFillColor(c);
+        glutPostRedisplay();
+    }
 }
 
 void Context::setLineColor(Color c)
 {
     this->appLineColor = c;
+    if (appClickedObject) {
+        appClickedObject->elem.setLineColor(c);
+        glutPostRedisplay();
+    }
 }
 
 void Context::setLineWeight(float w)
 {
     this->appLineWeight = w;
+    if (appClickedObject) {
+        appClickedObject->elem.setLineWeight(w);
+        glutPostRedisplay();
+    }
 }
 
 void Context::setIsFilled(bool b)
 {
     this->appFillShape = b;
+    if (appClickedObject) {
+        appClickedObject->elem.setIsFilled(b);
+        glutPostRedisplay();
+    }
+}
+
+void Context::setShapes(vector<Shape> shapes)
+{
+    this->appShapes = shapes;
 }
 
 /********* GETTERS *********/
@@ -211,9 +242,9 @@ Shape Context::newShape(Point mid, int x, int y, int ref)
     Shape s;
     Element e = Element(appFillShape, appLineWeight, appLineColor, appFillColor);
     switch (appShapeToDraw) {
-        case SQUARE: s = Square(mid, x, y, ref, e); break;
-        case TRIANGLE: s = Triangle(mid, x, y, ref, e); break;
-        case CIRCLE: s = Circle(mid, x, y, ref, e); break;
+        case SQUARE: s = Square(mid, x, y, ref, e, "SQUARE"); break;
+        case TRIANGLE: s = Triangle(mid, x, y, ref, e, "TRIANGLE"); break;
+        case CIRCLE: s = Circle(mid, x, y, ref, e, "CIRCLE"); break;
     }
     return s;
 }
@@ -221,7 +252,7 @@ Shape Context::newShape(Point mid, int x, int y, int ref)
 void Context::createEditBox()
 {
     Shape o = *this->appClickedObject;
-    Shape s = Square(o.getCenter(), o.getWidth(), o.getHeight(), -1, o.elem);
+    Shape s = Square(o.getCenter(), o.getWidth(), o.getHeight(), -1, o.elem, "SQUARE");
     s.elem.setIsFilled(false);
     s.elem.setLineWeight(1.0f);
     s.elem.setLineColor(Color(0.4, 0.4, 0.4, 0.7));
@@ -231,30 +262,55 @@ void Context::createEditBox()
 
     Point p = o.getCenter();
     p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
-    Shape c0 = Square(p, 5, 5, -2, e);
+    Shape c0 = Square(p, 5, 5, -2, e, "SQUARE");
     this->tempShapes.push_back(c0);
 
     p = o.getCenter();
     p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
-    Shape c1 = Square(p, 5, 5, -3, e);
+    Shape c1 = Square(p, 5, 5, -3, e, "SQUARE");
     this->tempShapes.push_back(c1);
 
     p = o.getCenter();
     p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
-    Shape c2 = Square(p, 5, 5, -4, e);
+    Shape c2 = Square(p, 5, 5, -4, e, "SQUARE");
     this->tempShapes.push_back(c2);
 
     p = o.getCenter();
     p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
-    Shape c3 = Square(p, 5, 5, -5, e);
+    Shape c3 = Square(p, 5, 5, -5, e, "SQUARE");
     this->tempShapes.push_back(c3);
 
     e.setFillColor(Color(0.0, 1.0, 0.0));
     e.setLineColor(Color(0.0, 1.0, 0.0));
     p = o.getCenter();
     p.move(p.getPoint()[0], p.getPoint()[1] + o.getHeight()/2);
-    Shape c4 = Square(p, 5, 5, -6, e);
+    Shape c4 = Square(p, 5, 5, -6, e, "SQUARE");
     this->tempShapes.push_back(c4);
+}
+
+void Context::deleteSelectedShape()
+{
+    if (appClickedObject) {
+        int objRef = appClickedObject->getObjRef();
+        int n = 0;
+        for (int i = 0; i < appShapes.size(); i++) {
+            if (appShapes[i].getObjRef() == objRef) {
+                n = i;
+                break;
+            }
+        }
+        int i = 0;
+        vector<Shape>::iterator it;
+        for(it=appShapes.begin() ; it < appShapes.end(); it++, i++) {
+            if (i == n) {
+                appShapes.erase(it);
+            }
+        }
+        appClickedObject = NULL;
+        appPrevClickedObject = NULL;
+        resetTempShapes();
+        glutPostRedisplay();
+    }
 }
 
 void Context::resetAppShapes()
@@ -265,4 +321,29 @@ void Context::resetAppShapes()
 void Context::resetTempShapes()
 {
     tempShapes = std::vector<Shape>();
+}
+
+void Context::drawEditBox()
+{
+    if (appClickedObject && appToolMode == MOVE || appToolMode == ROTATE || appToolMode == RESIZE){
+        Point p = appClickedObject->getCenter();
+        glPushMatrix();
+        //glTranslatef(-300, 0, 0);
+
+        glTranslatef(p.getPoint()[0], 1000 - p.getPoint()[1], 0);
+        glRotatef(appClickedObject->getRotation(), 0, 0, 1);
+
+        glTranslatef(-p.getPoint()[0], p.getPoint()[1] - 1000, 0);
+        cout << "x : " << p.getPoint()[0] << " y: " << p.getPoint()[1] << "\n";
+
+        for (std::vector<int>::size_type i = 0; i < tempShapes.size(); i++) {
+            tempShapes[i].drawShape();
+        }
+
+        glPopMatrix();
+    } else if (appToolMode == DRAW) {
+        for (std::vector<int>::size_type i = 0; i < tempShapes.size(); i++) {
+            tempShapes[i].drawShape();
+        }
+    }
 }

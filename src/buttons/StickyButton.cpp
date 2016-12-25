@@ -9,7 +9,7 @@ StickyButton::StickyButton(){
 
 void StickyButton::callBack()
 {
-    
+    Button::callBack();
 }
 
 void StickyButton::drawButton()
@@ -20,6 +20,11 @@ void StickyButton::drawButton()
         glPushMatrix();
             glScalef(this->w, this->h, 0.0f);
             glLoadName(this->objRef);
+            if (isClicked || isEnabled()) {
+                glColor3f(0.65, 0.65, 0.65);
+            } else {
+                glColor3f(0.7, 0.7, 0.7);
+            }
             glBegin(GL_POLYGON);
             for (int i = 0; i < 4; i++) {
                 float vec[2];
@@ -56,7 +61,8 @@ void StickyButton::drawButton()
                 width += glutStrokeWidth(GLUT_STROKE_ROMAN, this->label[i]);
 
             glTranslatef(-width / 2, 0.0, 0.0f);
-            glColor3f(0.0f, 1.0f, 1.0f);
+            glColor3f(0.0f, 0.0f, 0.0f);
+            glLineWidth(1.0f);
             for (int i = 0; i < this->label.size(); i++) {
                 glutStrokeCharacter(GLUT_STROKE_ROMAN, this->label[i]);
             }
@@ -68,6 +74,11 @@ void StickyButton::drawButton()
 void StickyButton::toggleEnabled()
 {
     this->enabled = !this->enabled;
+}
+
+void StickyButton::setEnabled(bool b)
+{
+    this->enabled = b;
 }
 
 bool StickyButton::isEnabled()

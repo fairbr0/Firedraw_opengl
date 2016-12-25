@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Color.h"
+#include <string>
 
 class Element
 {
@@ -15,6 +16,7 @@ public:
     Color getLineColor();
     Color getFillColor();
     bool getIsFilled();
+    string toString();
 protected:
     Color lineColor;
     Color fillColor;

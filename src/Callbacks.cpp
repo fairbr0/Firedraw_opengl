@@ -2,6 +2,7 @@
 #include "Color.h"
 #include "Context.h"
 #include <iostream>
+#include "io.h"
 
 using namespace std;
 
@@ -13,18 +14,21 @@ Callbacks::Callbacks(Context *c)
 void Callbacks::squareSelectedCallBack()
 {
     cout << "selected square\n";
+    c->setToolMode(DRAW);
     c->setShapeToDraw(SQUARE);
 }
 
 void Callbacks::circleSelectedCallBack()
 {
     cout << "selected circle\n";
+    c->setToolMode(DRAW);
     c->setShapeToDraw(CIRCLE);
 }
 
 void Callbacks::triangleSelectedCallBack()
 {
     cout << "selected triangle\n";
+    c->setToolMode(DRAW);
     c->setShapeToDraw(TRIANGLE);
 }
 
@@ -48,14 +52,57 @@ void Callbacks::toggleFilledCallBack()
     c->setIsFilled(!c->getIsFilled());
 }
 
-void Callbacks::changeLineColorCallBack(Color color) {
+void Callbacks::changeLineColorCallBack()
+{
     //set the context line color
     cout << "changing the line color\n";
-    c->setLineColor(color);
+    c->colorToChange = true;
 }
 
-void Callbacks::changeFillColorCallBack(Color color) {
+void Callbacks::changeFillColorCallBack()
+{
+    //set the context line color
+    cout << "changing the line color\n";
+    c->colorToChange = false;
+}
+
+void Callbacks::changeColorCallBack(Color color)
+{
     //set the context fill color
     cout << "changing the fill color\n";
-    c->setFillColor(color);
+    c->setColor(color);
+}
+
+void Callbacks::clearCanvasCallBack()
+{
+    c->resetAppShapes();
+    c->resetTempShapes();
+}
+
+void Callbacks::deleteSelectedCallBack()
+{
+    if (c->getToolMode() == MOVE)
+        c->deleteSelectedShape();
+}
+
+void Callbacks::selectDrawToolCallBack()
+{
+    c->setToolMode(DRAW);
+}
+
+void Callbacks::selectMoveToolCallBack()
+{
+    c->setToolMode(MOVE);
+}
+
+void Callbacks::loadCallBack()
+{
+    io i(this->c);
+    i.load();
+}
+
+void Callbacks::saveCallBack()
+{
+    io i(this->c);
+    i.save();
 }

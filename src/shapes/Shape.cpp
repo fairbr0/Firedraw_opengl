@@ -2,6 +2,7 @@
 #include <GLUT/glut.h>
 #include <vector>
 #include <iostream>
+#include <string>
 
 Shape::Shape()
 {
@@ -9,7 +10,7 @@ Shape::Shape()
     rotation = 0.0;
 }
 
-Shape::Shape(Point p, int w, int h, int objRef, Element e)
+Shape::Shape(Point p, int w, int h, int objRef, Element e, string type)
 {
     center = p;
     width = w;
@@ -17,9 +18,10 @@ Shape::Shape(Point p, int w, int h, int objRef, Element e)
     rotation = 0.0;
     this->objRef = objRef;
     elem = e;
+    this->type = type;
 }
 
-Shape::Shape(Point p, int w, int h, int objRef)
+Shape::Shape(Point p, int w, int h, int objRef, string type)
 {
     center = p;
     width = w;
@@ -27,6 +29,7 @@ Shape::Shape(Point p, int w, int h, int objRef)
     rotation = 0.0;
     this->objRef = objRef;
     elem = Element();
+    this->type = type;
 }
 
 Point Shape::getCenter()
@@ -34,9 +37,14 @@ Point Shape::getCenter()
     return center;
 }
 
-double Shape::getRotation()
+float Shape::getRotation()
 {
     return rotation;
+}
+
+string Shape::getType()
+{
+    return this->type;
 }
 
 void Shape::move(float x, float y) {
@@ -82,7 +90,9 @@ void Shape::drawShape()
     glLineWidth(this->elem.getLineWeight());
     glPushMatrix();
         glTranslatef(center.getPoint()[0], 1000-center.getPoint()[1], 0.0f);
+        glRotatef(rotation, 0, 0, 1);
         glScalef((GLfloat) width, (GLfloat) height, 1.0f);
+
         glLoadName(this->objRef);
         glBegin(GL_LINE_LOOP);
             for (std::vector<int>::size_type i = 0; i < geometry.size(); i++) {
@@ -100,3 +110,16 @@ void Shape::drawShape()
         }
     glPopMatrix();
 }
+
+string Shape::toString()
+{
+    return "";
+}
+    /*stirng rtn = "";
+    rtn += "Center: x = " << this->p.getPoint()[0] << " y = " << this->p.getPoint()[1] << "\n";
+    rtn += "Width: " << this->width << "\n";
+    rtn += "Height: " << this->height << "\n";
+    rtn += "Ref: " << this->objRef << "\n";
+    rtn += this->elem->toString();
+    return rtn;
+}*/

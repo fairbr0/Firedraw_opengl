@@ -3,14 +3,15 @@
 #include "Point.h"
 #include "Element.h"
 #include <vector>
+#include <string>
 
 class Shape : public Element {
 public:
     Shape();
-    Shape(Point p, int w, int h, int objRef, Element e);
-    Shape(Point p, int w, int h, int objRef);
+    Shape(Point p, int w, int h, int objRef, Element e, string type);
+    Shape(Point p, int w, int h, int objRef, string type);
     Point getCenter();
-    double getRotation();
+    float getRotation();
     int getWidth();
     int getHeight();
     int getObjRef();
@@ -20,12 +21,15 @@ public:
     void move(float x, float y);
     void drawShape();
     Element elem;
+    string toString();
+    string getType();
 private:
     Point center;
     int width;
     int height;
-    double rotation;
+    float rotation;
     int objRef;
+    string type;
 protected:
     std::vector<Point> geometry;
 };

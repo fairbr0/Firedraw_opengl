@@ -6,6 +6,8 @@
 
 #define MOVE 1
 #define DRAW 0
+#define RESIZE 2
+#define ROTATE 3
 
 #define SQUARE 0
 #define TRIANGLE 1
@@ -18,6 +20,7 @@ class Context
 {
 public:
     Context();
+    bool colorToChange = true;
     bool appIsClicked;
     int appShapeToDraw;
     int appRenderMode;
@@ -37,6 +40,7 @@ public:
     float appLineWeight;
     bool appFillShape;
     Shape* appPrevClickedObject = NULL;
+    int windowHeight, windowWidth;
 
     void setSelectedObject(int id);
     void setShapeToDraw(int id);
@@ -54,6 +58,8 @@ public:
     void setLineWeight(float w);
     void setIsFilled(bool b);
     void setPrevSelectedObject(Shape *);
+    void setColor(Color c);
+    void setShapes(std::vector<Shape> shapes);
 
     unsigned int* getPickBuffer();
     bool isClicked();
@@ -76,8 +82,11 @@ public:
     std::vector<Shape> * getTempShapes();
 
     Shape newShape(Point mid, int x, int y, int ref);
+    void deleteSelectedShape();
     void resetAppShapes();
     void resetTempShapes();
     void createEditBox();
+    void drawEditBox();
 private:
+
 };

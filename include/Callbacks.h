@@ -11,11 +11,18 @@ public:
     void increaseLineWeightCallBack();
     void decreaseLineWeightCallBack();
     void toggleFilledCallBack();
-    void changeLineColorCallBack(Color c);
-    void changeFillColorCallBack(Color c);
+    void changeColorCallBack(Color c);
+    void changeLineColorCallBack();
+    void changeFillColorCallBack();
     void squareSelectedCallBack();
     void triangleSelectedCallBack();
     void circleSelectedCallBack();
+    void clearCanvasCallBack();
+    void selectDrawToolCallBack();
+    void selectMoveToolCallBack();
+    void deleteSelectedCallBack();
+    void loadCallBack();
+    void saveCallBack();
     Context *c;
 private:
     //Context c;

@@ -19,7 +19,7 @@ public:
     void (Callbacks::*callBack_func)();
     void drawButton();
     void makeGeometry();
-    void whoami();
+    string whoami();
     void callBack();
     Callbacks* callbacks;
 private:
