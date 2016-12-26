@@ -5,6 +5,8 @@
 #include "Context.h"
 #include <stdlib.h>
 #include "Toolbar.h"
+#include "Popover.h"
+#include "Callbacks.h"
 
 #define MOVE 1
 #define DRAW 0
@@ -17,6 +19,7 @@ using namespace std;
 
 Context c;
 Toolbar t(&c, 1000, 100);
+Popover popover;
 
 void reshape(int width, int height) {
     glMatrixMode(GL_PROJECTION);
@@ -28,8 +31,24 @@ void reshape(int width, int height) {
     glutPostRedisplay();
 }
 
+void setPopover()
+{
+    int type = c.getNewPopoverType();
+    switch (type) {
+        case SAVE_POPUP:
+            popover = Popover(&t.callbacks, &Callbacks::popover_saveCallBack, &Callbacks::popover_cancelCallBack, "Save", "Save", "Save drawing");
+            t.setMoveMode();
+            break;
+        case LOAD_POPUP:
+            break;
+        case TEXT_POPUP:
+            break;
+    }
+}
+
 void display()
 {
+
     int viewport[4];
     GLint dx = glutGet(GLUT_WINDOW_WIDTH);
     GLint dy = glutGet(GLUT_WINDOW_HEIGHT);
@@ -51,14 +70,22 @@ void display()
     glLineWidth(3.0f);
     glColor3f(1.0f, 1.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
-    for (std::vector<int>::size_type i = 0; i < c.getShapes()->size(); i++) {
-        c.appShapes[i].drawShape();
+    if (c.getToolMode() != POPOVER) {
+        for (std::vector<int>::size_type i = 0; i < c.getShapes()->size(); i++) {
+            c.appShapes[i].drawShape();
+        }
+
+        c.drawEditBox();
+
+
+        t.draw();
+    } else {
+        cout << "should create popup " << c.checkShoulCreatePopup() << "\n";
+        if (c.checkShoulCreatePopup() != false) {
+            setPopover();
+        }
+        popover.display();
     }
-
-    c.drawEditBox();
-
-
-    t.draw();
     if (c.getRenderMode() == GL_RENDER) {
         glutSwapBuffers();
     }
@@ -147,6 +174,33 @@ void handleToolbarClick(int button, int state, int x, int y)
                 if (item == 999999) {
                     t.deselectAll();
                     glutPostRedisplay();
+                }
+            }
+        }
+    }
+}
+
+void handlePopoverClick(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON){
+        c.setRenderMode(GL_SELECT);
+        glRenderMode(GL_SELECT);
+        display();
+        c.setRenderMode(GL_RENDER);
+        int NHits = glRenderMode(GL_RENDER);
+        std::cout << "popover click handler\n";
+        std::cout << "NHITS: " << NHits << "\n";
+
+        for (int i = 0, index = 0; i < NHits; i++) {
+            int nitems = c.getPickBuffer()[index++];
+            int zmin = c.getPickBuffer()[index++];
+            int zmax = c.getPickBuffer()[index++];
+
+            for (int j = 0; j < nitems; j++) {
+                int item = c.getPickBuffer()[index++];
+                std::cout << item << '\n';
+                if (item >= 2000000) {
+                    popover.handleClickEvent(item, state);
                 }
             }
         }
@@ -315,6 +369,8 @@ void mouse_click(int button, int state, int x, int y)
                 c.setToolMode(MOVE);
             }
             break;
+        case POPOVER:
+            handlePopoverClick(button, state, x, y);
     }
 }
 

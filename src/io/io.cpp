@@ -19,7 +19,7 @@ io::io(Context *c)
     this->context = c;
 }
 
-void io::save()
+void io::save(string s)
 {
     //code incomming haha
     vector<Shape> *appShapes = this->context->getShapes();
@@ -63,14 +63,16 @@ void io::save()
     pugi::xml_node texts = image.append_child("texts");
     pugi::xml_node lines = image.append_child("lines");
 
-    doc.save_file("test_save.drw");
+    string file = s;
+    file += ".drw";
+    doc.save_file(file.c_str());
 
 }
 
-void io::load()
+void io::load(string s)
 {
     //get the file path to load
-    const char* path = "test_save.drw";
+    const char* path = s.c_str();
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(path);
     //pugi::xml_parse_result result = doc.load_file("tree.xml");

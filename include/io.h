@@ -7,8 +7,8 @@
 class io {
 public:
     io(Context *c);
-    void save();
-    void load();
+    void save(string s);
+    void load(string s);
 private:
     Context *context;
 };

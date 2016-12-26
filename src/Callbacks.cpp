@@ -3,6 +3,7 @@
 #include "Context.h"
 #include <iostream>
 #include "io.h"
+#include "string"
 
 using namespace std;
 
@@ -95,16 +96,34 @@ void Callbacks::selectMoveToolCallBack()
     c->setToolMode(MOVE);
 }
 
-void Callbacks::loadCallBack()
+void Callbacks::toolbar_loadCallBack()
 {
     io i(this->c);
-    i.load();
+    i.load("hu");
 }
 
-void Callbacks::saveCallBack()
+void Callbacks::toolbar_saveCallBack()
+{
+    c->setToolMode(POPOVER);
+    c->setCreatePopup(SAVE_POPUP);
+
+}
+
+void Callbacks::popover_cancelCallBack()
+{
+    std::cout << "In cancel callback\n";
+    cout << "c ref " << c << "\n";
+    c->setToolMode(MOVE);
+    c->redisplay();
+}
+
+void Callbacks::popover_saveCallBack(string rtn)
 {
     io i(this->c);
-    i.save();
+    i.save(rtn);
+    //std::cout << "save call back :" << rtn << "\n";
+    c->setToolMode(MOVE);
+    c->redisplay();
 }
 
 void Callbacks::increaseTransparencyCallBack()

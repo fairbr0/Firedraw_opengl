@@ -18,6 +18,7 @@ public:
     void deselectAll();
     void setDrawMode();
     void setMoveMode();
+    Callbacks callbacks = NULL;
 private:
     Context* c;
     int objRef, selectedRef, top, right;
@@ -28,7 +29,6 @@ private:
     vector<SwatchButton> colors;
     vector<Button*> buttons;
     vector<StickyButton*> stickyButtons;
-    Callbacks callbacks = NULL;
     int initColors(int offset);
     //****** Callback functions to update the current context *******//
 

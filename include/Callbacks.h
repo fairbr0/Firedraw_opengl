@@ -3,6 +3,7 @@
 
 #include "Color.h"
 #include "Context.h"
+#include <string>
 
 class Callbacks
 {
@@ -21,11 +22,12 @@ public:
     void selectDrawToolCallBack();
     void selectMoveToolCallBack();
     void deleteSelectedCallBack();
-    void loadCallBack();
-    void saveCallBack();
+    void toolbar_loadCallBack();
+    void toolbar_saveCallBack();
     void increaseTransparencyCallBack();
     void decreaseTransparencyCallBack();
+    void popover_cancelCallBack();
+    void popover_saveCallBack(string rtn);
     Context *c;
 private:
-    //Context c;
 };

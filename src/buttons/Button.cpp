@@ -25,7 +25,7 @@ Button::Button(float x, float y, float w, float h, string label, void (Callbacks
     this->callBack_func = callBack_func;
     this->callbacks = callbacks;
     this->makeGeometry();
-    }
+}
 
 string Button::whoami()
 {

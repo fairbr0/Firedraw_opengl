@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<image>
+	<objRef>1</objRef>
+	<shapes>
+		<shape>
+			<type>SQUARE</type>
+			<objRef>0</objRef>
+			<lineColor>
+				<r>0</r>
+				<g>0</g>
+				<b>0</b>
+				<a>1</a>
+			</lineColor>
+			<fillColor>
+				<r>0</r>
+				<g>0</g>
+				<b>0</b>
+				<a>1</a>
+			</fillColor>
+			<lineWeight>2</lineWeight>
+			<filled>false</filled>
+			<width>-407</width>
+			<height>-660</height>
+			<center>
+				<x>501</x>
+				<y>535</y>
+			</center>
+			<rotation>0</rotation>
+		</shape>
+	</shapes>
+	<texts />
+	<lines />
+</image>

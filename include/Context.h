@@ -14,6 +14,10 @@
 #define TRIANGLE 1
 #define CIRCLE 2
 
+#define SAVE_POPUP 0
+#define LOAD_POPUP 1
+#define TEXT_POPUP 2
+
 #define PICK_TOL 5
 #define PICK_BUFFER_SIZE 256
 
@@ -63,6 +67,7 @@ public:
     void setShapes(std::vector<Shape> shapes);
     void increaseAlpha();
     void decreaseAlpha();
+    void setCreatePopup(int type);
 
     unsigned int* getPickBuffer();
     bool isClicked();
@@ -83,6 +88,8 @@ public:
     Point* getInitialDrawPoint();
     std::vector<Shape> * getShapes();
     std::vector<Shape> * getTempShapes();
+    int getNewPopoverType();
+    bool checkShoulCreatePopup();
 
     Shape newShape(Point mid, int x, int y, int ref);
     void deleteSelectedShape();
@@ -90,6 +97,8 @@ public:
     void resetTempShapes();
     void createEditBox();
     void drawEditBox();
+    void redisplay();
 private:
-
+    bool createPopup;
+    int newPopupType;
 };

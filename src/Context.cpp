@@ -199,6 +199,13 @@ void Context::setShapes(vector<Shape> shapes)
     this->appShapes = shapes;
 }
 
+void Context::setCreatePopup(int type)
+{
+    this->createPopup = true;
+    this->newPopupType = type;
+    glutPostRedisplay();
+}
+
 /********* GETTERS *********/
 
 unsigned int* Context::getPickBuffer()
@@ -294,6 +301,20 @@ std::vector<Shape> * Context::getShapes()
 std::vector<Shape> * Context::getTempShapes()
 {
     return &tempShapes;
+}
+
+bool Context::checkShoulCreatePopup() {
+    return createPopup;
+}
+
+int Context::getNewPopoverType()
+{
+    std::cout << "should createPopup : " << createPopup << "\n";
+    if (!createPopup) return -1;
+    else {
+        createPopup = false;
+        return newPopupType;
+    }
 }
 
 /************ METHODS **********/
@@ -407,4 +428,9 @@ void Context::drawEditBox()
             tempShapes[i].drawShape();
         }
     }
+}
+
+void Context::redisplay()
+{
+    glutPostRedisplay();
 }

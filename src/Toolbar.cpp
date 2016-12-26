@@ -58,8 +58,8 @@ Toolbar::Toolbar(Context *c, int height, int width)
     stickyButtons.push_back(&mveBtn);
     stickyButtons.push_back(&drwBtn);
     buttons.push_back(&delBtn);
-    this->sveBtn = Button(right / 2, 30, 80, 40, "Save", &Callbacks::saveCallBack, &callbacks, this->objRef++);
-    this->opnBtn = Button(right / 2, 80, 80, 40, "Open", &Callbacks::loadCallBack, &callbacks, this->objRef++);
+    this->sveBtn = Button(right / 2, 30, 80, 40, "Save", &Callbacks::toolbar_saveCallBack, &callbacks, this->objRef++);
+    this->opnBtn = Button(right / 2, 80, 80, 40, "Open", &Callbacks::toolbar_loadCallBack, &callbacks, this->objRef++);
     buttons.push_back(&sveBtn);
     buttons.push_back(&opnBtn);
     offset = this->initColors(top - 450);
