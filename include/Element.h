@@ -17,9 +17,10 @@ public:
     Color getFillColor();
     bool getIsFilled();
     string toString();
-protected:
     Color lineColor;
     Color fillColor;
     float lineWeight;
     bool isFilled;
+protected:
+
 };

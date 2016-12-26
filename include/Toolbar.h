@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include "Context.h"
+#include "Square.h"
 
 using namespace std;
 
@@ -20,7 +21,9 @@ public:
 private:
     Context* c;
     int objRef, selectedRef, top, right;
-    Button sqrBtn, crlBtn, triBtn, ilwBtn, dlwBtn, txtBtn, lneBtn, clrBtn, sveBtn, opnBtn, delBtn;
+    Button sqrBtn, crlBtn, triBtn, ilwBtn, dlwBtn, txtBtn, itBtn, lneBtn, clrBtn, sveBtn, opnBtn, delBtn;
+    Button dtBtn;
+    Square lcBox, fcBox;
     StickyButton fillBtn,lcBtn, fcBtn, mveBtn, drwBtn;
     vector<SwatchButton> colors;
     vector<Button*> buttons;

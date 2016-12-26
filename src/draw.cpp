@@ -341,6 +341,8 @@ void keyboard(unsigned char key, int x, int y)
 
 void drawinit()
 {
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     c.windowWidth = 1000;

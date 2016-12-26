@@ -133,6 +133,67 @@ void Context::setIsFilled(bool b)
     }
 }
 
+void Context::increaseAlpha()
+{
+
+    if (appClickedObject) {
+        if (colorToChange) {
+            // change line alpha
+            float alpha = appClickedObject->elem.lineColor.getColors()[3] + 0.05;
+            if (alpha > 1) alpha = 1;
+            appClickedObject->elem.lineColor.setAlpha(alpha);
+        } else {
+            // change fill alpha
+            float alpha = appClickedObject->elem.fillColor.getColors()[3] + 0.05;
+            if (alpha > 1) alpha = 1;
+            appClickedObject->elem.fillColor.setAlpha(alpha);
+        }
+        glutPostRedisplay();
+    } else {
+        if (colorToChange) {
+            // change line alpha
+            float alpha = appLineColor.getColors()[3] + 0.05;
+            if (alpha > 1) alpha = 1;
+            appLineColor.setAlpha(alpha);
+        } else {
+            // change fill alpha
+            float alpha = appFillColor.getColors()[3] + 0.05;
+            if (alpha > 1) alpha = 1;
+            appFillColor.setAlpha(alpha);
+        }
+    }
+}
+
+void Context::decreaseAlpha() {
+    if (appClickedObject) {
+        if (colorToChange) {
+            // change line alpha
+            float alpha = appClickedObject->elem.lineColor.getColors()[3] - 0.05;
+            if (alpha < 0) alpha = 0;
+            appClickedObject->elem.lineColor.setAlpha(alpha);
+        } else {
+            // change fill alpha
+            float alpha = appClickedObject->elem.fillColor.getColors()[3] - 0.05;
+            if (alpha < 0) alpha = 0;
+            appClickedObject->elem.fillColor.setAlpha(alpha);
+        }
+        glutPostRedisplay();
+    } else {
+        if (colorToChange) {
+            // change line alpha
+            float alpha = appLineColor.getColors()[3] - 0.05;
+            if (alpha < 0) alpha = 0;
+            appLineColor.setAlpha(alpha);
+        } else {
+            // change fill alpha
+            float alpha = appFillColor.getColors()[3] - 0.05;
+            if (alpha < 0) alpha = 0;
+            appFillColor.setAlpha(alpha);
+        }
+    }
+
+}
+
 void Context::setShapes(vector<Shape> shapes)
 {
     this->appShapes = shapes;

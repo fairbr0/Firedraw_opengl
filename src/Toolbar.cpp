@@ -8,6 +8,7 @@
 #include "SwatchButton.h"
 #include "Context.h"
 #include <string>
+#include "Element.h"
 
 using namespace std;
 
@@ -27,7 +28,9 @@ Toolbar::Toolbar(Context *c, int height, int width)
     this->ilwBtn = Button(3 * right / 4, top - 280, 40, 40, "+", &Callbacks::increaseLineWeightCallBack, &callbacks, this->objRef++);
     this->fillBtn = StickyButton(right / 2, top - 330, 80, 40, "Filled", &Callbacks::toggleFilledCallBack, &callbacks, this->objRef++);
     this->lcBtn = StickyButton(right / 4, top - 380, 40, 40, "Line", &Callbacks::changeLineColorCallBack, &callbacks, this->objRef++);
-    this->fcBtn = StickyButton(3 * right / 4, top - 380, 40, 40, "Fill", &Callbacks::changeFillColorCallBack, &callbacks, this->objRef++);
+    this->fcBtn = StickyButton(right / 4, top - 430, 40, 40, "Fill", &Callbacks::changeFillColorCallBack, &callbacks, this->objRef++);
+    this->lcBox = Square(Point(3 * right /4, 380), 40, 40, this->objRef++, Element(true, 1.0, Color(0, 0, 0), *c->getLineColor()), "SQUARE");
+    this->fcBox = Square(Point(3 * right /4, 430), 40, 40, this->objRef++, Element(true, 1.0, Color(0, 0, 0), *c->getFillColor()), "SQUARE");
     cout << "make first set\n";
     buttons.push_back(&sqrBtn);
     buttons.push_back(&triBtn);
@@ -42,8 +45,9 @@ Toolbar::Toolbar(Context *c, int height, int width)
 
     int offset = top - 600;
 
-    this->dtBtn = Button(right / 4, offset - 30, 40, 40, "-", &Callbacks::triangleSelectedCallBack, &callbacks, this->objRef++);
-    this->itBtn = Button(3 * right / 4, offset - 30, 40, 40, "+", &Callbacks::triangleSelectedCallBack, &callbacks, this->objRef++);
+    cout << "about to create trans buttons\n";
+    this->dtBtn = Button(right / 4, offset - 30, 40, 40, "-", &Callbacks::decreaseTransparencyCallBack, &callbacks, this->objRef++);
+    this->itBtn = Button(3 * right / 4, offset - 30, 40, 40, "+", &Callbacks::increaseTransparencyCallBack, &callbacks, this->objRef++);
     this->clrBtn = Button(right / 2, offset - 80, 80, 40, "Clear", &Callbacks::clearCanvasCallBack, &callbacks, this->objRef++);
     this->mveBtn = StickyButton(right / 4, offset - 130, 40, 40, "Move", &Callbacks::selectMoveToolCallBack, &callbacks, this->objRef++);
     this->drwBtn = StickyButton(3 * right / 4, offset - 130, 40, 40, "Draw", &Callbacks::selectDrawToolCallBack, &callbacks, this->objRef++);
@@ -58,7 +62,7 @@ Toolbar::Toolbar(Context *c, int height, int width)
     this->opnBtn = Button(right / 2, 80, 80, 40, "Open", &Callbacks::loadCallBack, &callbacks, this->objRef++);
     buttons.push_back(&sveBtn);
     buttons.push_back(&opnBtn);
-    offset = this->initColors(top - 400);
+    offset = this->initColors(top - 450);
     this->lcBtn.toggleEnabled();
     this->drwBtn.toggleEnabled();
 }
@@ -100,6 +104,11 @@ void Toolbar::draw()
     for (int i = 0; i < colors.size(); i++) {
         colors[i].drawButton();
     }
+
+    this->lcBox.elem.setFillColor(*c->getLineColor());
+    this->fcBox.elem.setFillColor(*c->getFillColor());
+    this->lcBox.drawShape();
+    this->fcBox.drawShape();
 }
 
 void Toolbar::handleClickEvent(int objRef, int state)

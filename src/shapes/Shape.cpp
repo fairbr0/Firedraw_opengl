@@ -86,6 +86,7 @@ int Shape::getObjRef()
 void Shape::drawShape()
 {
     vector<float> colors = this->elem.getLineColor().getColors();
+    std::cout << "alpha channel LINE: " << colors[3] << "\n";
     glColor4f(colors[0], colors[1], colors[2], colors[3]);
     glLineWidth(this->elem.getLineWeight());
     glPushMatrix();
@@ -101,6 +102,7 @@ void Shape::drawShape()
         glEnd();
         if (elem.getIsFilled()) {
             vector<float> colors = this->elem.getFillColor().getColors();
+            std::cout << "alpha channel FILL: " << colors[3] << "\n";
             glColor4f(colors[0], colors[1], colors[2], colors[3]);
             glBegin(GL_POLYGON);
                 for (std::vector<int>::size_type i = 0; i < geometry.size(); i++) {

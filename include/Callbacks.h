@@ -23,6 +23,8 @@ public:
     void deleteSelectedCallBack();
     void loadCallBack();
     void saveCallBack();
+    void increaseTransparencyCallBack();
+    void decreaseTransparencyCallBack();
     Context *c;
 private:
     //Context c;

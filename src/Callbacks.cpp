@@ -62,7 +62,7 @@ void Callbacks::changeLineColorCallBack()
 void Callbacks::changeFillColorCallBack()
 {
     //set the context line color
-    cout << "changing the line color\n";
+    cout << "changing the fill color\n";
     c->colorToChange = false;
 }
 
@@ -105,4 +105,14 @@ void Callbacks::saveCallBack()
 {
     io i(this->c);
     i.save();
+}
+
+void Callbacks::increaseTransparencyCallBack()
+{
+    c->increaseAlpha();
+}
+
+void Callbacks::decreaseTransparencyCallBack()
+{
+    c->decreaseAlpha();
 }

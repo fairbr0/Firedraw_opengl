@@ -4,10 +4,11 @@
 #include <GLUT/glut.h>
 #include "Color.h"
 
-#define MOVE 1
 #define DRAW 0
+#define MOVE 1
 #define RESIZE 2
 #define ROTATE 3
+#define POPOVER 4
 
 #define SQUARE 0
 #define TRIANGLE 1
@@ -60,6 +61,8 @@ public:
     void setPrevSelectedObject(Shape *);
     void setColor(Color c);
     void setShapes(std::vector<Shape> shapes);
+    void increaseAlpha();
+    void decreaseAlpha();
 
     unsigned int* getPickBuffer();
     bool isClicked();

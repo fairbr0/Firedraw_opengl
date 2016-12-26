@@ -2,3 +2,5 @@
 #include <vector>
 
 using namespace std;
+
+Square::Square(){}

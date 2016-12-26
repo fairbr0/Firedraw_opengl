@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <image>
-	<objRef>3</objRef>
+	<objRef>2</objRef>
 	<shapes>
 		<shape>
 			<type>SQUARE</type>
@@ -19,11 +19,11 @@
 			</fillColor>
 			<lineWeight>2</lineWeight>
 			<filled>false</filled>
-			<width>445</width>
-			<height>482</height>
+			<width>10</width>
+			<height>10</height>
 			<center>
-				<x>632</x>
-				<y>617</y>
+				<x>351</x>
+				<y>183</y>
 			</center>
 			<rotation>0</rotation>
 		</shape>
@@ -33,47 +33,22 @@
 			<lineColor>
 				<r>0</r>
 				<g>0</g>
-				<b>1</b>
-				<a>1</a>
-			</lineColor>
-			<fillColor>
-				<r>1</r>
-				<g>0</g>
 				<b>0</b>
-				<a>1</a>
-			</fillColor>
-			<lineWeight>2</lineWeight>
-			<filled>true</filled>
-			<width>266</width>
-			<height>654</height>
-			<center>
-				<x>416</x>
-				<y>347</y>
-			</center>
-			<rotation>139.616348</rotation>
-		</shape>
-		<shape>
-			<type>TRIANGLE</type>
-			<objRef>2</objRef>
-			<lineColor>
-				<r>0.5</r>
-				<g>0.5</g>
-				<b>0.5</b>
 				<a>1</a>
 			</lineColor>
 			<fillColor>
 				<r>0</r>
 				<g>1</g>
 				<b>0</b>
-				<a>1</a>
+				<a>0</a>
 			</fillColor>
 			<lineWeight>2</lineWeight>
 			<filled>true</filled>
-			<width>197</width>
-			<height>-411</height>
+			<width>-329</width>
+			<height>-548</height>
 			<center>
-				<x>898</x>
-				<y>794</y>
+				<x>513</x>
+				<y>429</y>
 			</center>
 			<rotation>0</rotation>
 		</shape>

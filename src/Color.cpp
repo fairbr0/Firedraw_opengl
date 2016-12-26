@@ -42,3 +42,8 @@ void Color::setColor(float r, float g, float b, float a)
     blue = b;
     alpha = a;
 }
+
+void Color::setAlpha(float a)
+{
+    this->alpha = a;
+}
