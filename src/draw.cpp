@@ -36,12 +36,16 @@ void setPopover()
     int type = c.getNewPopoverType();
     switch (type) {
         case SAVE_POPUP:
-            popover = Popover(&t.callbacks, &Callbacks::popover_saveCallBack, &Callbacks::popover_cancelCallBack, "Save", "Save", "Save drawing");
+            popover = Popover(&c, &t.callbacks, &Callbacks::popover_saveCallBack, &Callbacks::popover_cancelCallBack, "Save", "Save", "Enter name of file to save:");
             t.setMoveMode();
             break;
         case LOAD_POPUP:
+            popover = Popover(&c, &t.callbacks, &Callbacks::popover_loadCallBack, &Callbacks::popover_cancelCallBack, "Load", "Load", "Enter name of file to open:");
+            t.setMoveMode();
             break;
         case TEXT_POPUP:
+            popover = Popover(&c, &t.callbacks, &Callbacks::popover_textCallBack, &Callbacks::popover_cancelCallBack, "Create", "Text", "Enter text to add to drawing:");
+            t.setMoveMode();
             break;
     }
 }
@@ -49,38 +53,42 @@ void setPopover()
 void display()
 {
 
-    int viewport[4];
+    GLint viewport[4];
     GLint dx = glutGet(GLUT_WINDOW_WIDTH);
     GLint dy = glutGet(GLUT_WINDOW_HEIGHT);
 
     glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
     glLoadIdentity();
     if (c.getRenderMode() == GL_SELECT) {
-        int viewport;
-        glGetIntegerv(GL_VIEWPORT, &viewport);
-        std::cout << "got viewport\n";
-        gluPickMatrix((double) c.getMouseX(), (double) (dy - c.getMouseY()), PICK_TOL, PICK_TOL, &viewport);
-    }
-    gluOrtho2D(0, c.windowWidth, 0, c.windowHeight);
-    if (c.getRenderMode() == GL_SELECT) {
+        glGetIntegerv(GL_VIEWPORT, viewport);
+
         glInitNames();
         glPushName(0xffffffff);
+
+        std::cout << "got viewport\n";
+        gluPickMatrix((double) c.getMouseX(), (double) (dy - c.getMouseY()), PICK_TOL, PICK_TOL, viewport);
     }
+    gluOrtho2D(0, c.windowWidth, 0, c.windowHeight);
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glFlush();
     glClear(GL_COLOR_BUFFER_BIT);
     glLineWidth(3.0f);
     glColor3f(1.0f, 1.0f, 1.0f);
-    glMatrixMode(GL_MODELVIEW);
-    if (c.getToolMode() != POPOVER) {
-        for (std::vector<int>::size_type i = 0; i < c.getShapes()->size(); i++) {
-            c.appShapes[i].drawShape();
-        }
 
-        c.drawEditBox();
+    for (std::vector<int>::size_type i = 0; i < c.getShapes()->size(); i++) {
+        c.appShapes[i].drawShape();
+    }
 
+    for (std::vector<int>::size_type i = 0; i < c.appTexts.size(); i++) {
+        c.appTexts[i].drawShape();
+    }
 
-        t.draw();
-    } else {
-        cout << "should create popup " << c.checkShoulCreatePopup() << "\n";
+    c.drawEditBox();
+    t.draw();
+
+    if (c.getToolMode() == POPOVER) {
         if (c.checkShoulCreatePopup() != false) {
             setPopover();
         }
@@ -376,6 +384,10 @@ void mouse_click(int button, int state, int x, int y)
 
 void keyboard(unsigned char key, int x, int y)
 {
+    if (c.getToolMode() == POPOVER && c.getKeyboardCaptured() == true) {
+        popover.addChar(key);
+        return;
+    }
     switch (key) {
         case 'q': exit(0); break;
         case 's':

@@ -37,7 +37,7 @@ void Callbacks::increaseLineWeightCallBack()
 {
     cout << "increasing line weight\n";
     float weight = c->getLineWeight();
-    if (weight > 0.5) c->setLineWeight(weight + 0.5);
+    if (weight < 10) c->setLineWeight(weight + 0.5);
 }
 
 void Callbacks::decreaseLineWeightCallBack()
@@ -98,8 +98,8 @@ void Callbacks::selectMoveToolCallBack()
 
 void Callbacks::toolbar_loadCallBack()
 {
-    io i(this->c);
-    i.load("hu");
+    c->setToolMode(POPOVER);
+    c->setCreatePopup(LOAD_POPUP);
 }
 
 void Callbacks::toolbar_saveCallBack()
@@ -107,6 +107,11 @@ void Callbacks::toolbar_saveCallBack()
     c->setToolMode(POPOVER);
     c->setCreatePopup(SAVE_POPUP);
 
+}
+void Callbacks::toolbar_textCallBack()
+{
+    c->setToolMode(POPOVER);
+    c->setCreatePopup(TEXT_POPUP);
 }
 
 void Callbacks::popover_cancelCallBack()
@@ -121,9 +126,22 @@ void Callbacks::popover_saveCallBack(string rtn)
 {
     io i(this->c);
     i.save(rtn);
-    //std::cout << "save call back :" << rtn << "\n";
     c->setToolMode(MOVE);
     c->redisplay();
+}
+
+void Callbacks::popover_loadCallBack(string rtn)
+{
+    io i(this->c);
+    i.load(rtn);
+    c->setToolMode(MOVE);
+    c->redisplay();
+}
+
+void Callbacks::popover_textCallBack(string rtn)
+{
+    c->setToolMode(MOVE);
+    c->addText(rtn);
 }
 
 void Callbacks::increaseTransparencyCallBack()

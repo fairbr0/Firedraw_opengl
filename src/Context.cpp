@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include "Text.h"
 
 
 Context::Context()
@@ -89,6 +90,11 @@ void Context::setSelectedObject(int id)
     for (int i = 0; i < appShapes.size(); i++) {
         if (appShapes[i].getObjRef() == id) {
             appClickedObject = &appShapes[i];
+        }
+    }
+    for (int i = 0; i < appTexts.size(); i++) {
+        if (appTexts[i].getObjRef() == id) {
+            appClickedObject = &appTexts[i];
         }
     }
 }
@@ -206,6 +212,10 @@ void Context::setCreatePopup(int type)
     glutPostRedisplay();
 }
 
+void Context::setKeyboardCaptured(bool b) {
+    this->appKeyboardCaptured = b;
+}
+
 /********* GETTERS *********/
 
 unsigned int* Context::getPickBuffer()
@@ -317,6 +327,11 @@ int Context::getNewPopoverType()
     }
 }
 
+bool Context::getKeyboardCaptured()
+{
+    return this->appKeyboardCaptured;
+}
+
 /************ METHODS **********/
 
 Shape Context::newShape(Point mid, int x, int y, int ref)
@@ -374,18 +389,40 @@ void Context::deleteSelectedShape()
 {
     if (appClickedObject) {
         int objRef = appClickedObject->getObjRef();
-        int n = 0;
+        int n = -1;
+        int loc = 0;
         for (int i = 0; i < appShapes.size(); i++) {
             if (appShapes[i].getObjRef() == objRef) {
                 n = i;
                 break;
             }
+            n++;
         }
+        if (n == -1) {
+            for (int i = 0; i < appTexts.size(); i++) {
+                if (appTexts[i].getObjRef() == objRef) {
+                    n = i;
+                    loc = 1;
+                    break;
+                }
+                n++;
+            }
+        }
+
         int i = 0;
-        vector<Shape>::iterator it;
-        for(it=appShapes.begin() ; it < appShapes.end(); it++, i++) {
-            if (i == n) {
-                appShapes.erase(it);
+        if (loc == 0) {
+            vector<Shape>::iterator it;
+            for(it=appShapes.begin() ; it < appShapes.end(); it++, i++) {
+                if (i == n) {
+                    appShapes.erase(it);
+                }
+            }
+        } else {
+            vector<Text>::iterator it;
+            for(it=appTexts.begin() ; it < appTexts.end(); it++, i++) {
+                if (i == n) {
+                    appTexts.erase(it);
+                }
             }
         }
         appClickedObject = NULL;
@@ -398,6 +435,7 @@ void Context::deleteSelectedShape()
 void Context::resetAppShapes()
 {
     appShapes = std::vector<Shape>();
+    appTexts = std::vector<Text>();
 }
 
 void Context::resetTempShapes()
@@ -433,4 +471,11 @@ void Context::drawEditBox()
 void Context::redisplay()
 {
     glutPostRedisplay();
+}
+
+void Context::addText(string text)
+{
+    Element elem(appFillShape, appLineWeight, appLineColor, appFillColor);
+    Text t = Text(text, Point(500, 500), 300, 200, this->appNextObjectId++, elem, "TEXT");
+    this->appTexts.push_back(t);
 }

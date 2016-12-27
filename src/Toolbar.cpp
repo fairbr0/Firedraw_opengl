@@ -22,7 +22,7 @@ Toolbar::Toolbar(Context *c, int height, int width)
     this->sqrBtn = Button(right / 2, top - 30, 80, 40, "Square", &Callbacks::squareSelectedCallBack, &callbacks, this->objRef++);
     this->crlBtn = Button(right / 2, top - 80, 80, 40, "Circle", &Callbacks::circleSelectedCallBack, &callbacks, this->objRef++);
     this->triBtn = Button(right / 2, top - 130, 80, 40, "Triangle", &Callbacks::triangleSelectedCallBack, &callbacks, this->objRef++);
-    this->txtBtn = Button(right / 2, top - 180, 80, 40, "Text", &Callbacks::triangleSelectedCallBack, &callbacks, this->objRef++);
+    this->txtBtn = Button(right / 2, top - 180, 80, 40, "Text", &Callbacks::toolbar_textCallBack, &callbacks, this->objRef++);
     this->lneBtn = Button(right / 2, top - 230, 80, 40, "Line", &Callbacks::triangleSelectedCallBack, &callbacks, this->objRef++);
     this->dlwBtn = Button(right / 4, top - 280, 40, 40, "-", &Callbacks::decreaseLineWeightCallBack, &callbacks, this->objRef++);
     this->ilwBtn = Button(3 * right / 4, top - 280, 40, 40, "+", &Callbacks::increaseLineWeightCallBack, &callbacks, this->objRef++);

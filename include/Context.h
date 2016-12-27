@@ -3,6 +3,7 @@
 #include <Vector>
 #include <GLUT/glut.h>
 #include "Color.h"
+#include "Text.h"
 
 #define DRAW 0
 #define MOVE 1
@@ -39,6 +40,7 @@ public:
     Shape* appClickedObject = NULL;
     std::vector<Shape> tempShapes;
     std::vector<Shape> appShapes;
+    std::vector<Text> appTexts;
     Point drawInitialPoint;
     Color appLineColor;
     Color appFillColor;
@@ -46,6 +48,7 @@ public:
     bool appFillShape;
     Shape* appPrevClickedObject = NULL;
     int windowHeight, windowWidth;
+    bool appKeyboardCaptured = false;
 
     void setSelectedObject(int id);
     void setShapeToDraw(int id);
@@ -68,6 +71,7 @@ public:
     void increaseAlpha();
     void decreaseAlpha();
     void setCreatePopup(int type);
+    void setKeyboardCaptured(bool b);
 
     unsigned int* getPickBuffer();
     bool isClicked();
@@ -90,6 +94,7 @@ public:
     std::vector<Shape> * getTempShapes();
     int getNewPopoverType();
     bool checkShoulCreatePopup();
+    bool getKeyboardCaptured();
 
     Shape newShape(Point mid, int x, int y, int ref);
     void deleteSelectedShape();
@@ -98,6 +103,7 @@ public:
     void createEditBox();
     void drawEditBox();
     void redisplay();
+    void addText(string text);
 private:
     bool createPopup;
     int newPopupType;

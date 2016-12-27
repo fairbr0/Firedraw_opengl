@@ -24,10 +24,13 @@ public:
     void deleteSelectedCallBack();
     void toolbar_loadCallBack();
     void toolbar_saveCallBack();
+    void toolbar_textCallBack();
     void increaseTransparencyCallBack();
     void decreaseTransparencyCallBack();
     void popover_cancelCallBack();
     void popover_saveCallBack(string rtn);
+    void popover_loadCallBack(string rtn);
+    void popover_textCallBack(string rtn);
     Context *c;
 private:
 };

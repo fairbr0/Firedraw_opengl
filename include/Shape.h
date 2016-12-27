@@ -24,12 +24,13 @@ public:
     string toString();
     string getType();
 private:
+
+protected:
+    std::vector<Point> geometry;
     Point center;
     int width;
     int height;
     float rotation;
     int objRef;
     string type;
-protected:
-    std::vector<Point> geometry;
 };

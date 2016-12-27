@@ -72,6 +72,7 @@ void io::save(string s)
 void io::load(string s)
 {
     //get the file path to load
+    s += ".drw";
     const char* path = s.c_str();
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(path);
