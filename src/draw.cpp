@@ -7,9 +7,9 @@
 #include "Popover.h"
 #include "Callbacks.h"
 #ifdef __APPLE__
-#include <GLUT/glut.h> 
+#include <GLUT/glut.h>
 #else
-#include <GL/glut.h> 
+#include <GL/glut.h>
 #endif
 
 #define MOVE 1
@@ -29,10 +29,10 @@ Popover popover;
 void reshape(int width, int height) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    c.windowWidth = width;
-    c.windowHeight = height;
-    cout << "w: " << width << " h: " << height <<"\n";
+    c.windowWidth = 1000;
+    c.windowHeight = 1000;
     gluOrtho2D(0, c.windowWidth, 0, c.windowHeight);
+    glutReshapeWindow(c.windowWidth, c.windowHeight);
     glutPostRedisplay();
 }
 

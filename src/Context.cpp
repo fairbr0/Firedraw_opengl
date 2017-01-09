@@ -170,7 +170,7 @@ void Context::increaseAlpha()
             float alpha = appClickedObject->elem.fillColor.getColors()[3] + 0.05;
             if (alpha > 1) alpha = 1;
             appClickedObject->elem.fillColor.setAlpha(alpha);
-            appLineColor.setAlpha(alpha);
+            appFillColor.setAlpha(alpha);
         }
         glutPostRedisplay();
     } else {
@@ -201,7 +201,7 @@ void Context::decreaseAlpha() {
             float alpha = appClickedObject->elem.fillColor.getColors()[3] - 0.05;
             if (alpha < 0) alpha = 0;
             appClickedObject->elem.fillColor.setAlpha(alpha);
-            appLineColor.setAlpha(alpha);
+            appFillColor.setAlpha(alpha);
         }
         glutPostRedisplay();
     } else {
