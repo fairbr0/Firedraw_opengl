@@ -1,5 +1,9 @@
 #include "Text.h"
-#include <GLUT/glut.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h> 
+#else
+#include <GL/glut.h> 
+#endif
 #include <iostream>
 #include <string>
 

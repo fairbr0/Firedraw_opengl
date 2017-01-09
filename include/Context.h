@@ -1,9 +1,14 @@
 #pragma once
 #include "Shape.h"
-#include <Vector>
-#include <GLUT/glut.h>
+#include <vector>
+#ifdef __APPLE__
+#include <GLUT/glut.h> 
+#else
+#include <GL/glut.h> 
+#endif
 #include "Color.h"
 #include "Text.h"
+#include "Line.h"
 
 #define DRAW 0
 #define MOVE 1
@@ -14,6 +19,7 @@
 #define SQUARE 0
 #define TRIANGLE 1
 #define CIRCLE 2
+#define LINE 3
 
 #define SAVE_POPUP 0
 #define LOAD_POPUP 1
@@ -38,9 +44,11 @@ public:
     int appNextObjectId;
     unsigned int PickBuffer[PICK_BUFFER_SIZE];
     Shape* appClickedObject = NULL;
+    Line tempLine;
     std::vector<Shape> tempShapes;
     std::vector<Shape> appShapes;
     std::vector<Text> appTexts;
+    std::vector<Line> appLines;
     Point drawInitialPoint;
     Color appLineColor;
     Color appFillColor;
@@ -72,6 +80,7 @@ public:
     void decreaseAlpha();
     void setCreatePopup(int type);
     void setKeyboardCaptured(bool b);
+    void setTempLine(Line l);
 
     unsigned int* getPickBuffer();
     bool isClicked();
@@ -95,6 +104,7 @@ public:
     int getNewPopoverType();
     bool checkShoulCreatePopup();
     bool getKeyboardCaptured();
+    Line getTempLine();
 
     Shape newShape(Point mid, int x, int y, int ref);
     void deleteSelectedShape();
@@ -104,6 +114,8 @@ public:
     void drawEditBox();
     void redisplay();
     void addText(string text);
+    void setProperties();
+    Line newLine(Point p1, Point p2, int ref);
 private:
     bool createPopup;
     int newPopupType;

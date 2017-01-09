@@ -33,6 +33,12 @@ void Callbacks::triangleSelectedCallBack()
     c->setShapeToDraw(TRIANGLE);
 }
 
+void Callbacks::lineSelectedCallBack()
+{
+    c->setToolMode(DRAW);
+    c->setShapeToDraw(LINE);
+}
+
 void Callbacks::increaseLineWeightCallBack()
 {
     cout << "increasing line weight\n";

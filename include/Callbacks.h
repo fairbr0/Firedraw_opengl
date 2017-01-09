@@ -17,6 +17,7 @@ public:
     void changeFillColorCallBack();
     void squareSelectedCallBack();
     void triangleSelectedCallBack();
+    void lineSelectedCallBack();
     void circleSelectedCallBack();
     void clearCanvasCallBack();
     void selectDrawToolCallBack();

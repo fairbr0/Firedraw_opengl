@@ -1,5 +1,9 @@
 #include "Shape.h"
-#include <GLUT/glut.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h> 
+#else
+#include <GL/glut.h> 
+#endif
 #include <vector>
 #include <iostream>
 #include <string>
@@ -86,11 +90,10 @@ int Shape::getObjRef()
 void Shape::drawShape()
 {
     vector<float> colors = this->elem.getLineColor().getColors();
-    std::cout << "alpha channel LINE: " << colors[3] << "\n";
     glColor4f(colors[0], colors[1], colors[2], colors[3]);
     glLineWidth(this->elem.getLineWeight());
     glPushMatrix();
-        glTranslatef(center.getPoint()[0], 1000-center.getPoint()[1], 0.0f);
+        glTranslatef(center.getPoint()[0], center.getPoint()[1], 0.0f);
         glRotatef(rotation, 0, 0, 1);
         glScalef((GLfloat) width, (GLfloat) height, 1.0f);
 
@@ -102,7 +105,6 @@ void Shape::drawShape()
         glEnd();
         if (elem.getIsFilled()) {
             vector<float> colors = this->elem.getFillColor().getColors();
-            std::cout << "alpha channel FILL: " << colors[3] << "\n";
             glColor4f(colors[0], colors[1], colors[2], colors[3]);
             glBegin(GL_POLYGON);
                 for (std::vector<int>::size_type i = 0; i < geometry.size(); i++) {

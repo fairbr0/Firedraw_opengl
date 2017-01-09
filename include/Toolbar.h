@@ -30,6 +30,6 @@ private:
     vector<Button*> buttons;
     vector<StickyButton*> stickyButtons;
     int initColors(int offset);
-    //****** Callback functions to update the current context *******//
+    void drawTitle(int offset, string text);
 
 };

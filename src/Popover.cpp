@@ -1,8 +1,12 @@
 #include "Popover.h"
-#include <GLUT/glut.h>
 #include "Callbacks.h"
 #include "Context.h"
 #include <iostream>
+#ifdef __APPLE__
+#include <GLUT/glut.h> 
+#else
+#include <GL/glut.h> 
+#endif
 
 using namespace std;
 

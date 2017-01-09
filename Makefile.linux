@@ -1,0 +1,29 @@
+LIBDIRS= -L/usr/X11R6/lib
+LDLIBS = -lglut -lGL -lGLU -lX11 -lm
+CC := g++
+SRCDIR := src
+BINDIR := bin
+BUILDDIR := build
+INCLUDEDIR := include
+
+SRCEXT := cpp
+SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+CFLAGS := -g
+OBJS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
+INC := -I include
+
+TARGET = $(BINDIR)/main
+
+$(TARGET): $(OBJS)
+	@echo " Linking..."
+	@echo " $(CC) $^ -o $(TARGET) $(LIBDIRS)"; $(CC) $^ -o $(TARGET) $(LIBDIRS) $(LDLIBS)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(@D)
+	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(LIBDIRS) $(LDLIBS) $(INC) -c -o $@ $<
+
+clean:
+	@echo " Cleaning...";
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+
+.PHONY: clean

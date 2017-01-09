@@ -1,5 +1,4 @@
 #include <iostream>
-#include <GLUT/glut.h>
 #include <vector>
 #include <cmath>
 #include "Context.h"
@@ -7,12 +6,18 @@
 #include "Toolbar.h"
 #include "Popover.h"
 #include "Callbacks.h"
+#ifdef __APPLE__
+#include <GLUT/glut.h> 
+#else
+#include <GL/glut.h> 
+#endif
 
 #define MOVE 1
 #define DRAW 0
 #define PICK_TOL 10
 #define PICK_BUFFER_SIZE 256
 const float RAD_TO_DEG = 180.0/(atan(1)*4);
+const float DEG_TO_RAD = (atan(1)*4) / 180;
 
 
 using namespace std;
@@ -29,6 +34,23 @@ void reshape(int width, int height) {
     cout << "w: " << width << " h: " << height <<"\n";
     gluOrtho2D(0, c.windowWidth, 0, c.windowHeight);
     glutPostRedisplay();
+}
+
+void rotateEditBoxClick(float* x, float* y, Point p, double angle)
+{
+    //apply rotation here
+
+    //translate to origin
+    float x_ = *x - p.getPoint()[0];
+    float y_ = *y - p.getPoint()[1];
+    double angle_rad = DEG_TO_RAD * angle;
+    float xp = x_ * cos(angle_rad) - y_ * sin(angle_rad);
+    float yp = y_ * cos(angle_rad) + x_ * sin(angle_rad);
+    *x = xp + p.getPoint()[0];
+    *y = yp + p.getPoint()[1];
+    //x' = x cos f - y sin f
+    //y' = y cos f + x sin f
+    //translate back
 }
 
 void setPopover()
@@ -67,7 +89,7 @@ void display()
         glPushName(0xffffffff);
 
         std::cout << "got viewport\n";
-        gluPickMatrix((double) c.getMouseX(), (double) (dy - c.getMouseY()), PICK_TOL, PICK_TOL, viewport);
+        gluPickMatrix((double) c.getMouseX(), (double) (c.getMouseY()), PICK_TOL, PICK_TOL, viewport);
     }
     gluOrtho2D(0, c.windowWidth, 0, c.windowHeight);
     glMatrixMode(GL_MODELVIEW);
@@ -83,6 +105,11 @@ void display()
 
     for (std::vector<int>::size_type i = 0; i < c.appTexts.size(); i++) {
         c.appTexts[i].drawShape();
+    }
+
+    cout << "num lines " << c.appLines.size() << "\n";
+    for (std::vector<int>::size_type i = 0; i < c.appLines.size(); i++) {
+        c.appLines[i].drawShape();
     }
 
     c.drawEditBox();
@@ -102,16 +129,23 @@ void display()
 void mouse_motion(int x, int y)
 {
     c.setMouseX(x);
-    c.setMouseY(y);
+    c.setMouseY(1000 - y);
     switch (c.getToolMode()) {
         case DRAW:
             if (c.isClicked()) {
-                Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x, y));
-                int dx = (c.getInitialDrawPoint()->getPoint()[0] - x);
-                int dy = (c.getInitialDrawPoint()->getPoint()[1] - y);
-                c.resetTempShapes();
-                c.getTempShapes()->push_back(c.newShape(mid, dx, dy, -1));
-                glutPostRedisplay();
+                if (c.getShapeToDraw() == LINE) {
+                    c.resetTempShapes();
+                    c.setTempLine(c.newLine(*c.getInitialDrawPoint(), Point(x, c.getMouseY()), -1));
+                    glutPostRedisplay();
+                } else {
+                    Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x, c.getMouseY()));
+                    int dx = (c.getInitialDrawPoint()->getPoint()[0] - x);
+                    int dy = (c.getInitialDrawPoint()->getPoint()[1] - c.getMouseY());
+                    if (dy < 0) dy = dy * -1;
+                    c.resetTempShapes();
+                    c.getTempShapes()->push_back(c.newShape(mid, dx, dy, -1));
+                    glutPostRedisplay();
+                }
             }
             break;
         case MOVE:
@@ -129,7 +163,7 @@ void mouse_motion(int x, int y)
             if (c.isClicked()) {
                 Point center = c.getSelectedObject()->getCenter();
                 float dx = center.getPoint()[0] - x;
-                float dy = center.getPoint()[1] - y;
+                float dy = -1 * (center.getPoint()[1] - c.getMouseY());
                 float curRot = c.getSelectedObject()->getRotation();
                 float angle = RAD_TO_DEG * atan2(dx, dy);
                 cout << "angle: " << angle << "\n";
@@ -142,9 +176,12 @@ void mouse_motion(int x, int y)
 
         case RESIZE:
             if (c.isClicked()) {
-                Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x, y));
+                //apply rotation to x and y
+                Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x, c.getMouseY()));
+
                 int dx = (c.getInitialDrawPoint()->getPoint()[0] - x);
-                int dy = (c.getInitialDrawPoint()->getPoint()[1] - y);
+                int dy = (c.getInitialDrawPoint()->getPoint()[1] - c.getMouseY());
+                if (dy < 0) dy *= -1;
                 c.getSelectedObject()->setCenter(mid);
                 c.getSelectedObject()->setSize(dx, dy);
                 c.resetTempShapes();
@@ -252,6 +289,9 @@ void handleEditBoxClick(int id) {
                 break;
         }
         cout << "x, y: " << x << " " << y << "\n";
+        //rotateEditBoxClick(&x, &y, p, c.getSelectedObject()->getRotation());
+        //cout << "rotated by: " << c.getSelectedObject()->getRotation() << "\n";
+        //cout << "x, y: " << x << " " << y << "\n";
         c.setInitialDrawPoint(Point(x, y));
         c.setToolMode(RESIZE);
     }
@@ -320,9 +360,9 @@ void handleMoveClick(int button, int state)
 void mouse_click(int button, int state, int x, int y)
 {
     c.setMouseX(x);
-    c.setMouseY(y);
+    c.setMouseY(1000 - y);
     c.setPrevMouseX(x);
-    c.setPrevMouseY(y);
+    c.setPrevMouseY(1000 - y);
 
     if (x <= 100) {
         handleToolbarClick(button, state, x, y);
@@ -335,28 +375,29 @@ void mouse_click(int button, int state, int x, int y)
                 std::cout << "LEFT CLICK @ x: " << x << " y: " << y << "\n";
                 if (state==GLUT_DOWN) {
                     c.isClicked(true);
-                    c.setInitialDrawPoint(Point(x, y));
-
-                    //***********remove later***********/
-                    //float color = (rand() % 255)/255.0f;
-                    //c.setLineColor(Color(color, color, color));
-                    /***********************************/
+                    c.setInitialDrawPoint(Point(x, c.getMouseY()));
 
                 } else if (state==GLUT_UP) {
 
                     t.deselectAll();
                     c.isClicked(false);
-                    Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x, y));
-                    int dx = (c.getInitialDrawPoint()->getPoint()[0] - x);
-                    int dy = (c.getInitialDrawPoint()->getPoint()[1] - y);
-
-                    if (c.getInitialDrawPoint()->getDistance(Point(x, y)) < 10.0) {
-                        dx = 10;
-                        dy = 10;
-                    }
 
                     int id = c.getObjectId();
-                    c.getShapes()->push_back(c.newShape(mid, dx, dy, id));
+                    if (c.getShapeToDraw() == LINE) {
+                        c.appLines.push_back(c.newLine(*c.getInitialDrawPoint(), Point(x, c.getMouseY()), id));
+                    } else {
+                        Point mid = c.getInitialDrawPoint()->getMidPoint(Point(x,  c.getMouseY()));
+                        int dx = (c.getInitialDrawPoint()->getPoint()[0] - x);
+                        int dy = (c.getInitialDrawPoint()->getPoint()[1] - c.getMouseY());
+                        if (dy < 0) dy *= -1;
+
+                        if (c.getInitialDrawPoint()->getDistance(Point(x, c.getMouseY())) < 10.0) {
+                            dx = 10;
+                            dy = 10;
+                        }
+
+                        c.getShapes()->push_back(c.newShape(mid, dx, dy, id));
+                    }
                     c.setObjectId(id + 1);
                     c.resetTempShapes();
                     glutPostRedisplay();
@@ -391,6 +432,7 @@ void keyboard(unsigned char key, int x, int y)
     switch (key) {
         case 'q': exit(0); break;
         case 's':
+            t.setDrawMode();
             if (c.getToolMode() == DRAW ) {
                 c.setShapeToDraw((c.getShapeToDraw()+ 1) % 3);
                 glutPostRedisplay();

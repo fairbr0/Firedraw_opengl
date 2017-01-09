@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include "Text.h"
-
+#include "Line.h"
 
 Context::Context()
 {
@@ -90,13 +90,29 @@ void Context::setSelectedObject(int id)
     for (int i = 0; i < appShapes.size(); i++) {
         if (appShapes[i].getObjRef() == id) {
             appClickedObject = &appShapes[i];
+            setProperties();
+            return;
         }
     }
     for (int i = 0; i < appTexts.size(); i++) {
         if (appTexts[i].getObjRef() == id) {
             appClickedObject = &appTexts[i];
+            return;
         }
     }
+    for (int i = 0; i < appLines.size(); i++) {
+        if (appLines[i].getObjRef() == id) {
+            appClickedObject = &appLines[i];
+            return;
+        }
+    }
+}
+
+void Context::setProperties()
+{
+    this->appLineColor = appClickedObject->elem.getLineColor();
+    this->appFillColor = appClickedObject->elem.getFillColor();
+    this->appLineWeight = appClickedObject->elem.getLineWeight();
 }
 
 void Context::setPrevSelectedObject(Shape *s){
@@ -148,11 +164,13 @@ void Context::increaseAlpha()
             float alpha = appClickedObject->elem.lineColor.getColors()[3] + 0.05;
             if (alpha > 1) alpha = 1;
             appClickedObject->elem.lineColor.setAlpha(alpha);
+            appLineColor.setAlpha(alpha);
         } else {
             // change fill alpha
             float alpha = appClickedObject->elem.fillColor.getColors()[3] + 0.05;
             if (alpha > 1) alpha = 1;
             appClickedObject->elem.fillColor.setAlpha(alpha);
+            appLineColor.setAlpha(alpha);
         }
         glutPostRedisplay();
     } else {
@@ -177,11 +195,13 @@ void Context::decreaseAlpha() {
             float alpha = appClickedObject->elem.lineColor.getColors()[3] - 0.05;
             if (alpha < 0) alpha = 0;
             appClickedObject->elem.lineColor.setAlpha(alpha);
+            appLineColor.setAlpha(alpha);
         } else {
             // change fill alpha
             float alpha = appClickedObject->elem.fillColor.getColors()[3] - 0.05;
             if (alpha < 0) alpha = 0;
             appClickedObject->elem.fillColor.setAlpha(alpha);
+            appLineColor.setAlpha(alpha);
         }
         glutPostRedisplay();
     } else {
@@ -349,40 +369,53 @@ Shape Context::newShape(Point mid, int x, int y, int ref)
 void Context::createEditBox()
 {
     Shape o = *this->appClickedObject;
-    Shape s = Square(o.getCenter(), o.getWidth(), o.getHeight(), -1, o.elem, "SQUARE");
-    s.elem.setIsFilled(false);
-    s.elem.setLineWeight(1.0f);
-    s.elem.setLineColor(Color(0.4, 0.4, 0.4, 0.7));
-    this->tempShapes.push_back(s);
+    if (o.getType() == "LINE") {
+        /*Element e = Element(true, 1.0f, Color(1.0, 0.0, 0.0, 0.7), Color(1.0, 0.0, 0.0, 0.7));
+        Line l = (Line)*this->appClickedObject;
+        Point p = l.getP1();
+        Shape c0 = Square(p, 5, 5, -2, e, "SQUARE");
+        this->tempShapes.push_back(c0);
 
-    Element e = Element(true, 1.0f, Color(1.0, 0.0, 0.0, 0.7), Color(1.0, 0.0, 0.0, 0.7));
+        p = l.getP2();
+        Shape c1 = Square(p, 5, 5, -2, e, "SQUARE");
+        this->tempShapes.push_back(c1);*/
+    } else {
 
-    Point p = o.getCenter();
-    p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
-    Shape c0 = Square(p, 5, 5, -2, e, "SQUARE");
-    this->tempShapes.push_back(c0);
+        Shape s = Square(o.getCenter(), o.getWidth(), o.getHeight(), -1, o.elem, "SQUARE");
+        s.elem.setIsFilled(false);
+        s.elem.setLineWeight(1.0f);
+        s.elem.setLineColor(Color(0.4, 0.4, 0.4, 0.7));
+        this->tempShapes.push_back(s);
 
-    p = o.getCenter();
-    p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
-    Shape c1 = Square(p, 5, 5, -3, e, "SQUARE");
-    this->tempShapes.push_back(c1);
+        Element e = Element(true, 1.0f, Color(1.0, 0.0, 0.0, 0.7), Color(1.0, 0.0, 0.0, 0.7));
 
-    p = o.getCenter();
-    p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
-    Shape c2 = Square(p, 5, 5, -4, e, "SQUARE");
-    this->tempShapes.push_back(c2);
+        Point p = o.getCenter();
+        p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
+        Shape c0 = Square(p, 5, 5, -2, e, "SQUARE");
+        this->tempShapes.push_back(c0);
 
-    p = o.getCenter();
-    p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
-    Shape c3 = Square(p, 5, 5, -5, e, "SQUARE");
-    this->tempShapes.push_back(c3);
+        p = o.getCenter();
+        p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] - o.getHeight()/2);
+        Shape c1 = Square(p, 5, 5, -3, e, "SQUARE");
+        this->tempShapes.push_back(c1);
 
-    e.setFillColor(Color(0.0, 1.0, 0.0));
-    e.setLineColor(Color(0.0, 1.0, 0.0));
-    p = o.getCenter();
-    p.move(p.getPoint()[0], p.getPoint()[1] + o.getHeight()/2);
-    Shape c4 = Square(p, 5, 5, -6, e, "SQUARE");
-    this->tempShapes.push_back(c4);
+        p = o.getCenter();
+        p.move(p.getPoint()[0] + o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
+        Shape c2 = Square(p, 5, 5, -4, e, "SQUARE");
+        this->tempShapes.push_back(c2);
+
+        p = o.getCenter();
+        p.move(p.getPoint()[0] - o.getWidth()/2, p.getPoint()[1] + o.getHeight()/2);
+        Shape c3 = Square(p, 5, 5, -5, e, "SQUARE");
+        this->tempShapes.push_back(c3);
+
+        e.setFillColor(Color(0.0, 1.0, 0.0));
+        e.setLineColor(Color(0.0, 1.0, 0.0));
+        p = o.getCenter();
+        p.move(p.getPoint()[0], p.getPoint()[1] + o.getHeight()/2);
+        Shape c4 = Square(p, 5, 5, -6, e, "SQUARE");
+        this->tempShapes.push_back(c4);
+    }
 }
 
 void Context::deleteSelectedShape()
@@ -408,6 +441,16 @@ void Context::deleteSelectedShape()
                 n++;
             }
         }
+        if (n == -1) {
+            for (int i = 0; i < appLines.size(); i++) {
+                if (appLines[i].getObjRef() == objRef) {
+                    n = i;
+                    loc = 2;
+                    break;
+                }
+                n++;
+            }
+        }
 
         int i = 0;
         if (loc == 0) {
@@ -417,11 +460,18 @@ void Context::deleteSelectedShape()
                     appShapes.erase(it);
                 }
             }
-        } else {
+        } else if (loc == 1){
             vector<Text>::iterator it;
             for(it=appTexts.begin() ; it < appTexts.end(); it++, i++) {
                 if (i == n) {
                     appTexts.erase(it);
+                }
+            }
+        } else {
+            vector<Line>::iterator it;
+            for(it=appLines.begin() ; it < appLines.end(); it++, i++) {
+                if (i == n) {
+                    appLines.erase(it);
                 }
             }
         }
@@ -436,6 +486,7 @@ void Context::resetAppShapes()
 {
     appShapes = std::vector<Shape>();
     appTexts = std::vector<Text>();
+    appLines = std::vector<Line>();
 }
 
 void Context::resetTempShapes()
@@ -450,10 +501,10 @@ void Context::drawEditBox()
         glPushMatrix();
         //glTranslatef(-300, 0, 0);
 
-        glTranslatef(p.getPoint()[0], 1000 - p.getPoint()[1], 0);
+        glTranslatef(p.getPoint()[0], p.getPoint()[1], 0);
         glRotatef(appClickedObject->getRotation(), 0, 0, 1);
 
-        glTranslatef(-p.getPoint()[0], p.getPoint()[1] - 1000, 0);
+        glTranslatef(-p.getPoint()[0], -p.getPoint()[1], 0);
         cout << "x : " << p.getPoint()[0] << " y: " << p.getPoint()[1] << "\n";
 
         for (std::vector<int>::size_type i = 0; i < tempShapes.size(); i++) {
@@ -462,8 +513,12 @@ void Context::drawEditBox()
 
         glPopMatrix();
     } else if (appToolMode == DRAW) {
-        for (std::vector<int>::size_type i = 0; i < tempShapes.size(); i++) {
-            tempShapes[i].drawShape();
+        if (appShapeToDraw == LINE) {
+            tempLine.drawShape();
+        } else {
+            for (std::vector<int>::size_type i = 0; i < tempShapes.size(); i++) {
+                tempShapes[i].drawShape();
+            }
         }
     }
 }
@@ -478,4 +533,21 @@ void Context::addText(string text)
     Element elem(appFillShape, appLineWeight, appLineColor, appFillColor);
     Text t = Text(text, Point(500, 500), 300, 200, this->appNextObjectId++, elem, "TEXT");
     this->appTexts.push_back(t);
+}
+
+Line Context::newLine(Point p1, Point p2, int ref)
+{
+    Element elem(appFillShape, appLineWeight, appLineColor, appFillColor);
+    Line l = Line(p1, p2, ref, elem, "LINE");
+    return l;
+}
+
+void Context::setTempLine(Line l)
+{
+    this->tempLine = l;
+}
+
+Line Context::getTempLine()
+{
+    return this->tempLine;
 }

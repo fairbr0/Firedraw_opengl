@@ -2,7 +2,11 @@
 #include "Color.h"
 #include <vector>
 #include <iostream>
-#include <GLUT/glut.h>
+#ifdef __APPLE__
+#include <GLUT/glut.h> 
+#else
+#include <GL/glut.h> 
+#endif
 
 using namespace std;
 
