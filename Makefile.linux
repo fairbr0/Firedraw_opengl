@@ -1,3 +1,10 @@
+###########################################
+## Makefile                              ##
+## Author - Jake Fairbrother (u1405424)  ##
+## Year - 2016                           ##
+## Permissions - Non profit reproduction ##
+###########################################
+
 LIBDIRS= -L/usr/X11R6/lib
 LDLIBS = -lglut -lGL -lGLU -lX11 -lm
 CC := g++

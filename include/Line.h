@@ -8,10 +8,8 @@ class Line : public Shape {
 public:
     Line();
     Line(Point p1, Point p2, int objRef, Element e, string type) :
-        Shape(p1, 0, 0, this->objRef, e, type) {
+        Shape(p1, 0, 0, objRef, e, type) {
             this->end = p2;
-            this->geometry.push_back(p1);
-            this->geometry.push_back(p2);
         }
     void drawShape();
     void rotate();
@@ -20,7 +18,5 @@ public:
     Point getP1();
     Point getP2();
 
-private:
-    Point end;
 
 };

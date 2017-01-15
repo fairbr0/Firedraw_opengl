@@ -1,3 +1,10 @@
+###########################################
+## Makefile                              ##
+## Author - Jake Fairbrother (u1405424)  ##
+## Year - 2016                           ##
+## Permissions - Non profit reproduction ##
+###########################################
+
 LIB := -framework GLUT -framework OpenGL
 LDLIBS := -lobjc -lm
 CC := g++

@@ -1,8 +1,8 @@
 #include "Line.h"
 #ifdef __APPLE__
-#include <GLUT/glut.h> 
+#include <GLUT/glut.h>
 #else
-#include <GL/glut.h> 
+#include <GL/glut.h>
 #endif
 
 Line::Line()
@@ -10,19 +10,19 @@ Line::Line()
 
 }
 
+/* overridden method to draw a line. The line endpoints are drawn directly,
+instead of being a generic line shape, then being translated, rotated etc as
+other shapes are. */
 void Line::drawShape()
 {
     vector<float> colors = this->elem.getLineColor().getColors();
-    std::cout << "alpha channel LINE: " << colors[3] << "\n";
     glColor4f(colors[0], colors[1], colors[2], colors[3]);
     glLineWidth(this->elem.getLineWeight());
     glPushMatrix();
-        cout << "drawing line\n";
         glLoadName(this->objRef);
         glBegin(GL_LINES);
-            for (std::vector<int>::size_type i = 0; i < geometry.size(); i++) {
-                glVertex2fv(geometry[i].getPoint());
-                }
+            glVertex2fv(center.getPoint());
+            glVertex2fv(end.getPoint());
         glEnd();
 
     glPopMatrix();
@@ -33,6 +33,7 @@ void Line::rotate()
 
 }
 
+//Method to move a lines position on screen.
 void Line::move(float x, float y)
 {
     float org_x = center.getPoint()[0];
@@ -43,6 +44,8 @@ void Line::move(float x, float y)
     end.move(org_x + x, org_y + y);
 }
 
+
+//Method to move an endpoint of the line
 void Line::movePoint(float x, float y, bool p)
 {
     Point* f;
@@ -56,6 +59,7 @@ void Line::movePoint(float x, float y, bool p)
     f->move(org_x + x, org_y + y);
 }
 
+//methods to return endpoints. P1 is the initial click location, P2 the final one
 Point Line::getP1()
 {
     return center;

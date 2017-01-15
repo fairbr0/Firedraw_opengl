@@ -1,6 +1,8 @@
 #include "Point.h"
 #include <cmath>
 
+//Basic point class, used throughout to draw shapes and lines to screen.
+
 Point::Point()
 {
     this->point[0] = 0.0f;

@@ -9,6 +9,7 @@ Color::Color()
     red = 0.0f; green = 0.0f; blue = 0.0f; alpha = 1.0f;
 }
 
+//create a solid color
 Color::Color(float r, float g, float b)
 {
     red = r;
@@ -17,6 +18,7 @@ Color::Color(float r, float g, float b)
     alpha = 1.0f;
 }
 
+//create color with desired transparency
 Color::Color(float r, float g, float b, float a)
 {
     red = r;
@@ -25,6 +27,7 @@ Color::Color(float r, float g, float b, float a)
     alpha = a;
 }
 
+//return a vector of colors
 vector<float> Color::getColors()
 {
     vector<float> vals;
@@ -35,6 +38,7 @@ vector<float> Color::getColors()
     return vals;
 }
 
+//change the color
 void Color::setColor(float r, float g, float b, float a)
 {
     red = r;
@@ -43,6 +47,7 @@ void Color::setColor(float r, float g, float b, float a)
     alpha = a;
 }
 
+//set the transparency
 void Color::setAlpha(float a)
 {
     this->alpha = a;

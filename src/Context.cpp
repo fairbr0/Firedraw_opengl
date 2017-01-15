@@ -8,6 +8,10 @@
 #include "Text.h"
 #include "Line.h"
 
+//the context class is the applications state machine. All current properties are
+//stored here, along with methods to alter them. Allows communication between certain
+//elements, such as the toolbar, popovers and buttons.
+
 Context::Context()
 {
     appIsClicked = false;
@@ -80,11 +84,14 @@ void Context::setObjectId(int id){
     this->appNextObjectId = id;
 }
 
+//
 void Context::setSelectedObject(int id)
 {
+    //remember the previously clicked object
     if (appClickedObject) {
         appPrevClickedObject = appClickedObject;
     }
+    //find the clicked object
     appClickedObject = 0;
     std::cout << "id: " << id << "\n";
     for (int i = 0; i < appShapes.size(); i++) {
@@ -97,22 +104,26 @@ void Context::setSelectedObject(int id)
     for (int i = 0; i < appTexts.size(); i++) {
         if (appTexts[i].getObjRef() == id) {
             appClickedObject = &appTexts[i];
+            setProperties();
             return;
         }
     }
     for (int i = 0; i < appLines.size(); i++) {
         if (appLines[i].getObjRef() == id) {
             appClickedObject = &appLines[i];
+            setProperties();
             return;
         }
     }
 }
 
+//set the context properties to those of a selected shape
 void Context::setProperties()
 {
     this->appLineColor = appClickedObject->elem.getLineColor();
     this->appFillColor = appClickedObject->elem.getFillColor();
     this->appLineWeight = appClickedObject->elem.getLineWeight();
+    this->appFillShape = appClickedObject->elem.getIsFilled();
 }
 
 void Context::setPrevSelectedObject(Shape *s){
@@ -157,7 +168,7 @@ void Context::setIsFilled(bool b)
 
 void Context::increaseAlpha()
 {
-
+    //change the alpha. if object selected, increase its alpha. Else, the toolbar alpha
     if (appClickedObject) {
         if (colorToChange) {
             // change line alpha
@@ -189,6 +200,7 @@ void Context::increaseAlpha()
 }
 
 void Context::decreaseAlpha() {
+    //change the alpha. if object selected, increase its alpha. Else, the toolbar alpha
     if (appClickedObject) {
         if (colorToChange) {
             // change line alpha
@@ -232,6 +244,7 @@ void Context::setCreatePopup(int type)
     glutPostRedisplay();
 }
 
+//set if the keyboard should be captuered, or used for shortcuts.
 void Context::setKeyboardCaptured(bool b) {
     this->appKeyboardCaptured = b;
 }
@@ -339,7 +352,6 @@ bool Context::checkShoulCreatePopup() {
 
 int Context::getNewPopoverType()
 {
-    std::cout << "should createPopup : " << createPopup << "\n";
     if (!createPopup) return -1;
     else {
         createPopup = false;
@@ -354,6 +366,7 @@ bool Context::getKeyboardCaptured()
 
 /************ METHODS **********/
 
+//create a new shape object and return it
 Shape Context::newShape(Point mid, int x, int y, int ref)
 {
     Shape s;
@@ -366,21 +379,24 @@ Shape Context::newShape(Point mid, int x, int y, int ref)
     return s;
 }
 
+//create the bounding box around a selected object.
 void Context::createEditBox()
 {
     Shape o = *this->appClickedObject;
+    //if the shape is a line, create 1 node on each end. no rotate node
     if (o.getType() == "LINE") {
-        /*Element e = Element(true, 1.0f, Color(1.0, 0.0, 0.0, 0.7), Color(1.0, 0.0, 0.0, 0.7));
-        Line l = (Line)*this->appClickedObject;
-        Point p = l.getP1();
+        Element e = Element(true, 1.0f, Color(1.0, 0.0, 0.0, 0.7), Color(1.0, 0.0, 0.0, 0.7));
+        Line* l = (Line*) &o;
+        Point p = l->getP1();
         Shape c0 = Square(p, 5, 5, -2, e, "SQUARE");
         this->tempShapes.push_back(c0);
 
-        p = l.getP2();
-        Shape c1 = Square(p, 5, 5, -2, e, "SQUARE");
-        this->tempShapes.push_back(c1);*/
+        Point q = l->getP2();
+        cout << "end point: " << q.getPoint()[0] << "\n";
+        Shape c1 = Square(q, 5, 5, -3, e, "SQUARE");
+        this->tempShapes.push_back(c1);
     } else {
-
+        //create a node in each corner, a bouding square, and a rotate node
         Shape s = Square(o.getCenter(), o.getWidth(), o.getHeight(), -1, o.elem, "SQUARE");
         s.elem.setIsFilled(false);
         s.elem.setLineWeight(1.0f);
@@ -418,6 +434,7 @@ void Context::createEditBox()
     }
 }
 
+//iterate through all shapes to find the objects location in the vector
 void Context::deleteSelectedShape()
 {
     if (appClickedObject) {
@@ -429,7 +446,6 @@ void Context::deleteSelectedShape()
                 n = i;
                 break;
             }
-            n++;
         }
         if (n == -1) {
             for (int i = 0; i < appTexts.size(); i++) {
@@ -438,7 +454,6 @@ void Context::deleteSelectedShape()
                     loc = 1;
                     break;
                 }
-                n++;
             }
         }
         if (n == -1) {
@@ -452,6 +467,7 @@ void Context::deleteSelectedShape()
             }
         }
 
+        //go through the correct vector, delete the correct element
         int i = 0;
         if (loc == 0) {
             vector<Shape>::iterator it;
@@ -475,6 +491,7 @@ void Context::deleteSelectedShape()
                 }
             }
         }
+        //set selections to null, remove bounding box
         appClickedObject = NULL;
         appPrevClickedObject = NULL;
         resetTempShapes();
@@ -492,20 +509,22 @@ void Context::resetAppShapes()
 void Context::resetTempShapes()
 {
     tempShapes = std::vector<Shape>();
+    Color c;
+    tempLine = Line(Point(0,0), Point(0,0), -1000, Element(false, 0.0, c, c), "LINE");
 }
 
+//draw the bounding box.
 void Context::drawEditBox()
 {
+    //draw the box if in any edit mode
     if (appClickedObject && appToolMode == MOVE || appToolMode == ROTATE || appToolMode == RESIZE){
         Point p = appClickedObject->getCenter();
         glPushMatrix();
-        //glTranslatef(-300, 0, 0);
 
         glTranslatef(p.getPoint()[0], p.getPoint()[1], 0);
         glRotatef(appClickedObject->getRotation(), 0, 0, 1);
 
         glTranslatef(-p.getPoint()[0], -p.getPoint()[1], 0);
-        cout << "x : " << p.getPoint()[0] << " y: " << p.getPoint()[1] << "\n";
 
         for (std::vector<int>::size_type i = 0; i < tempShapes.size(); i++) {
             tempShapes[i].drawShape();
@@ -513,6 +532,7 @@ void Context::drawEditBox()
 
         glPopMatrix();
     } else if (appToolMode == DRAW) {
+        //in draw mode, display any tempory shapes needed.
         if (appShapeToDraw == LINE) {
             tempLine.drawShape();
         } else {
@@ -528,6 +548,7 @@ void Context::redisplay()
     glutPostRedisplay();
 }
 
+//create and add a text object to the application
 void Context::addText(string text)
 {
     Element elem(appFillShape, appLineWeight, appLineColor, appFillColor);
@@ -535,6 +556,7 @@ void Context::addText(string text)
     this->appTexts.push_back(t);
 }
 
+//create and return a line object
 Line Context::newLine(Point p1, Point p2, int ref)
 {
     Element elem(appFillShape, appLineWeight, appLineColor, appFillColor);

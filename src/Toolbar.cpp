@@ -17,8 +17,12 @@
 
 using namespace std;
 
+//Toolbar class.
+
+//Create all the input buttons, with callback functions.
 Toolbar::Toolbar(Context *c, int height, int width)
 {
+    //set the context, create callbacks object
     this->c = c;
     this->top = height;
     this->right = width;
@@ -52,6 +56,7 @@ Toolbar::Toolbar(Context *c, int height, int width)
     this->sveBtn = Button(right / 2, top - 920, 80, 40, "Save", &Callbacks::toolbar_saveCallBack, &callbacks, this->objRef++);
     this->opnBtn = Button(right / 2, top - 970, 80, 40, "Open", &Callbacks::toolbar_loadCallBack, &callbacks, this->objRef++);
 
+    //add pointers to a vector so its possible to iterate through all and draw
     buttons.push_back(&sqrBtn);
     buttons.push_back(&triBtn);
     buttons.push_back(&crlBtn);
@@ -74,25 +79,37 @@ Toolbar::Toolbar(Context *c, int height, int width)
     this->drwBtn.toggleEnabled();
 }
 
+//enable the draw button, disable move
 void Toolbar::setDrawMode()
 {
     mveBtn.setEnabled(false);
     drwBtn.setEnabled(true);
 }
 
+//enable the move button, disable draw
 void Toolbar::setMoveMode()
 {
     mveBtn.setEnabled(true);
     drwBtn.setEnabled(false);
 }
 
+//draw the toolbar
 void Toolbar::draw()
 {
+    //check what the current draw mode is and set buttons appropriately.
     if (c->getToolMode() == DRAW) {
         setDrawMode();
     } else {
         setMoveMode();
     }
+
+    //check if the filled button should be set or not.
+    if (c->appFillShape) {
+        fillBtn.setEnabled(true);
+    } else {
+        fillBtn.setEnabled(false);
+    }
+    // draw the toolbar background
     glColor3f(0.8, 0.8, 0.8);
     glPushName(999999);
     glBegin(GL_POLYGON);
@@ -101,6 +118,7 @@ void Toolbar::draw()
         glVertex2f(100, 1000);
         glVertex2f(100, 0);
     glEnd();
+    //get the line weight from the context to display
     float weight_title = c->getLineWeight();
 
     stringstream ss;
@@ -108,17 +126,19 @@ void Toolbar::draw()
     drawTitle(620, "Line Width: " + ss.str());
     float alpha = 1.0;
 
-
+    //get the current alpha value set in the context
     if (c->colorToChange) {
         alpha = c->getLineColor()->getColors()[3];
     } else {
         alpha = c->getFillColor()->getColors()[3];
     }
 
+    //set the opactiy label to display
     ss.str("");
     ss << alpha;
     drawTitle(160, "Opacity: " + ss.str());
 
+    //draw all the buttons.
     for (int i = 0; i < buttons.size(); i++) {
         if (buttons[i]) {
             (buttons[i])->drawButton();
@@ -129,16 +149,19 @@ void Toolbar::draw()
         if (stickyButtons[i])
             (stickyButtons[i])->drawButton();
     }
+    //draw the color swatches
     for (int i = 0; i < colors.size(); i++) {
         colors[i].drawButton();
     }
 
+    //draw the line color and fill color boxes
     this->lcBox.elem.setFillColor(*c->getLineColor());
     this->fcBox.elem.setFillColor(*c->getFillColor());
     this->lcBox.drawShape();
     this->fcBox.drawShape();
 }
 
+//go through all buttons to find which was clicked.
 void Toolbar::handleClickEvent(int objRef, int state)
 {
     selectedRef = objRef;
@@ -201,18 +224,19 @@ void Toolbar::handleClickEvent(int objRef, int state)
     }
 }
 
+//method to draw a title
 void Toolbar::drawTitle(int offset, string text)
 {
     glPushMatrix();
         glTranslatef(5, offset, 0.0f);
 
+        //compute the string length in pixels
         glScalef(0.1, 0.1, 0.0);
         int width = 0;
         for (int i = 0; i < text.size(); i++)
             width += glutStrokeWidth(GLUT_STROKE_ROMAN, text[i]);
 
-
-        //glTranslatef((50 - width) /2, 0, 0);
+        // draw in current location, no translation
         glColor3f(0.0f, 0.0f, 0.0f);
         glLineWidth(1.0f);
         for (int i = 0; i < text.size(); i++) {
@@ -221,6 +245,7 @@ void Toolbar::drawTitle(int offset, string text)
     glPopMatrix();
 }
 
+//deselect all buttons
 void Toolbar::deselectAll()
 {
     for (int i = 0; i < buttons.size(); i++) {
@@ -234,10 +259,10 @@ void Toolbar::deselectAll()
     }
 }
 
+//create all the color swatches.
 int Toolbar::initColors(int offset)
 {
     //create the collor swatch area
-    cout << "Would set up colors\n";
     //reds
     SwatchButton b(right - 80, offset - 20, 20, 20, &Callbacks::changeColorCallBack, &callbacks, this->objRef++, Color(0.49f, 0.0f, 0.0f));
     colors.push_back(b);

@@ -10,6 +10,7 @@ public:
     Text(string s, Point p, int width, int height, int objRef, Element e, string type) : Shape(p, width, height, objRef, e, type){
         this->text = s;
     }
+    string getLabel();
     void drawShape();
 private:
     string text;

@@ -23,6 +23,7 @@ public:
     Element elem;
     string toString();
     string getType();
+    void setEnd(Point p);
 private:
 
 protected:
@@ -33,4 +34,6 @@ protected:
     float rotation;
     int objRef;
     string type;
+
+    Point end;
 };

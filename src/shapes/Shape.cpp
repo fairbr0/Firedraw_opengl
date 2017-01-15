@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 
+//Base shape class. Shape has a center, width and height for basic drawing.
 Shape::Shape()
 {
     center = Point(0.0f, 0.0f);
@@ -51,6 +52,7 @@ string Shape::getType()
     return this->type;
 }
 
+//move the shape to the given location
 void Shape::move(float x, float y) {
     float org_x = center.getPoint()[0];
     float org_y = center.getPoint()[1];
@@ -59,6 +61,10 @@ void Shape::move(float x, float y) {
 
 void Shape::setCenter(Point p) {
     this->center = p;
+}
+
+void Shape::setEnd(Point p) {
+    this->end = p;
 }
 
 void Shape::setRotation(double r)
@@ -119,11 +125,3 @@ string Shape::toString()
 {
     return "";
 }
-    /*stirng rtn = "";
-    rtn += "Center: x = " << this->p.getPoint()[0] << " y = " << this->p.getPoint()[1] << "\n";
-    rtn += "Width: " << this->width << "\n";
-    rtn += "Height: " << this->height << "\n";
-    rtn += "Ref: " << this->objRef << "\n";
-    rtn += this->elem->toString();
-    return rtn;
-}*/

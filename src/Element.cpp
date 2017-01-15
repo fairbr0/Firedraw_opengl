@@ -1,6 +1,7 @@
 #include "Element.h"
 #include <string>
 
+//Element class to hold information on object draw properties
 Element::Element()
 {
     lineWeight = 2.0;
@@ -61,11 +62,3 @@ string Element::toString()
 {
     return "";
 }
-    /*
-    stringstream rtn;
-    rtn << "Filled: " << this->isFilled << "\n";
-    rtn << "Line Col: " << this->lineColor.getColors()[0] << ", " << this->lineColor.getColors()[1] << ", " << this->lineColor.getColors()[2] << ", " << this->lineColor.getColors()[3] << "\n";
-    rtn << "Fill Col: " << this->fillColor.getColors()[0] << ", " << this->fillColor.getColors()[1] << ", " << this->fillColor.getColors()[2] << ", " << this->fillColor.getColors()[3] << "\n";
-    rtn << "Line Weight: " << this->lineWeight << "\n";
-    return rtn.str();
-}*/
