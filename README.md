@@ -1,5 +1,7 @@
 # Firedraw
 
+![Example image](example.png)
+
 Firedraw is an drawing application written in c++ and openGL for a module in Computer Graphics at Warwick university. The application draws inspiration from illustrator, allowing users to create lines, shapes and text. Objects can be deleted, resized, rotated and moved after creation, along with setting their fill color & opacity, line color & opactiy and line width. Drawing files can be loaded and saved to file. 
 
 The following keyboard shortcuts are available:
